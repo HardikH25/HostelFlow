@@ -49,9 +49,6 @@ const SLACountdown = ({ ticket, compact = false }) => {
         };
 
         calculateTime();
-        const interval = setInterval(calculateTime, 1000);
-
-        return () => clearInterval(interval);
     }, [ticket?.slaDeadline, ticket?.status]);
 
     if (!ticket) return null;

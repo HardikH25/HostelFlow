@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Ticket from '../models/Ticket.js';
 
 /**
@@ -32,6 +33,13 @@ export const verifyRole = (...allowedRoles) => {
 export const verifyTicketAccess = async (req, res, next) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
+
         const ticket = await Ticket.findById(id);
 
         if (!ticket) {

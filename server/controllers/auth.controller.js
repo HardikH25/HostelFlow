@@ -7,7 +7,7 @@ export const register = async (req, res) => {
     try {
         const { fullname, email, password, hostel, roomNumber, location, phone } = req.body;
 
-        const selectedHostel = hostel || (location?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
+        const selectedHostel = hostel || 'Neeladri Hostel';
         const finalRoom = roomNumber ? roomNumber.trim().toUpperCase() : '';
         const finalLocation = (finalRoom && selectedHostel) ? `${selectedHostel}, Room ${finalRoom}` : (location || `${selectedHostel}`);
 

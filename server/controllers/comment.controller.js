@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Comment from '../models/Comment.js';
 import Ticket from '../models/Ticket.js';
 import { emitToRoom } from '../utils/socket.js';
@@ -9,6 +10,12 @@ import { emitToRoom } from '../utils/socket.js';
 export const addComment = async (req, res) => {
     try {
         const { id: ticketId } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const { message, isInternal, attachments } = req.body;
 
         const hasText = message && message.trim() !== '';
@@ -91,6 +98,12 @@ export const addComment = async (req, res) => {
 export const getComments = async (req, res) => {
     try {
         const { id: ticketId } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
 
         const filter = { ticketId };
 

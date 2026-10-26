@@ -4,6 +4,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import helmet from 'helmet';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import User from './models/User.js';
@@ -37,6 +38,12 @@ const corsOriginCheck = (origin, callback) => {
     }
     return callback(new Error('Blocked by CORS policy'));
 };
+
+// Security headers
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
 
 // CORS configuration
 app.use(cors({

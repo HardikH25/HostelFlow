@@ -115,7 +115,7 @@ const Dashboard = () => {
 
     // Filter Logic
     const filteredTickets = tickets.filter((ticket) => {
-        const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel");
+        const ticketHostel = ticket.hostel || "Neeladri Hostel";
         const matchesHostel = filterHostel === "All" || ticketHostel === filterHostel;
         const matchesCategory = filterCategory === "All" || ticket.category === filterCategory;
         const matchesPriority = filterPriority === "All" || ticket.priority === filterPriority;

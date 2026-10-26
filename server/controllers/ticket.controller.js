@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Ticket from '../models/Ticket.js';
 import Comment from '../models/Comment.js';
 import User from '../models/User.js';
@@ -41,7 +42,7 @@ export const createTicket = async (req, res) => {
         const slaDeadline = new Date(Date.now() + deadlineHours * 60 * 60 * 1000);
 
         // Determine ticket hostel from explicit body, user's hostel, or location string
-        const resolvedHostel = hostel || req.user.hostel || (locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
+        const resolvedHostel = hostel || req.user.hostel || 'Neeladri Hostel';
         const finalLocation = locationSnapshot || req.user.location || `${resolvedHostel}`;
 
         const newTicket = await Ticket.create({
@@ -140,7 +141,15 @@ export const getTickets = async (req, res) => {
  */
 export const getTicketById = async (req, res) => {
     try {
-        const ticket = req.targetTicket || await Ticket.findById(req.params.id);
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
+
+        const ticket = req.targetTicket || await Ticket.findById(id);
 
         if (!ticket) {
             return res.status(404).json({
@@ -175,6 +184,12 @@ export const getTicketById = async (req, res) => {
 export const updateTicketStatus = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const { status } = req.body;
 
         const validStatuses = ['Open', 'Assigned', 'Awaiting-Student-Reply', 'Resolved'];
@@ -255,7 +270,19 @@ export const updateTicketStatus = async (req, res) => {
 export const assignTicket = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const { assignedTo } = req.body;
+        if (assignedTo && !mongoose.Types.ObjectId.isValid(assignedTo)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid technician ID.'
+            });
+        }
 
         const ticket = await Ticket.findById(id);
         if (!ticket) {
@@ -279,8 +306,8 @@ export const assignTicket = async (req, res) => {
             }
 
             // Enforce hostel scoping: tickets can only be assigned to staff within the same hostel
-            const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
-            const staffHostel = validStaff.hostel || (validStaff.location?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
+            const ticketHostel = ticket.hostel || 'Neeladri Hostel';
+            const staffHostel = validStaff.hostel || 'Neeladri Hostel';
 
             if (staffHostel !== ticketHostel) {
                 return res.status(400).json({
@@ -329,6 +356,12 @@ export const assignTicket = async (req, res) => {
 export const updateTicketPriority = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const { priority } = req.body;
 
         const validPriorities = ['Low', 'Medium', 'High', 'Critical'];
@@ -387,6 +420,12 @@ export const updateTicketPriority = async (req, res) => {
 export const deleteTicket = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const ticket = await Ticket.findById(id);
 
         if (!ticket) {
@@ -434,6 +473,12 @@ export const deleteTicket = async (req, res) => {
 export const updateTicketDeadline = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid ticket ID.'
+            });
+        }
         const { deadlineHours, customDeadline } = req.body;
 
         const ticket = await Ticket.findById(id);
