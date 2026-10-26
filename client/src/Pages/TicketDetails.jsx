@@ -63,7 +63,7 @@ const TicketDetails = () => {
 
     const isStaff = user?.role === 'Warden' || user?.role === 'Technician';
 
-    // 1. Fetch Ticket & Comments
+    // Fetch ticket details and comment thread
     useEffect(() => {
         let isMounted = true;
 
@@ -103,7 +103,7 @@ const TicketDetails = () => {
         };
     }, [ticketId, isStaff]);
 
-    // 2. WebSockets: Join ticket room and listen for real-time comments & updates
+    // Real-time ticket updates and comments via WebSocket
     useEffect(() => {
         if (!ticketId) return;
 
@@ -164,7 +164,7 @@ const TicketDetails = () => {
         }
     };
 
-    // 3. Post a comment
+    // Post a comment
     const handleSendComment = async (e) => {
         e.preventDefault();
         const hasText = message.trim() !== '';
@@ -180,24 +180,19 @@ const TicketDetails = () => {
             });
 
             if (res.data?.success) {
-                if (res.data.comment) {
-                    setComments((prev) => {
-                        if (prev.some((c) => c._id === res.data.comment._id)) return prev;
-                        return [...prev, res.data.comment];
-                    });
-                }
                 setMessage('');
                 setIsInternal(false);
                 setCommentAttachments([]);
             }
         } catch (err) {
             console.error('Failed to post comment:', err);
+            alert(err.response?.data?.message || 'Failed to post message. Please check your connection and try again.');
         } finally {
             setSubmittingComment(false);
         }
     };
 
-    // 4. Update Status (Triggers SLA Pause/Resume logic on backend!)
+    // Update ticket status
     const handleStatusChange = async (newStatus) => {
         setStatusUpdating(true);
         try {
@@ -217,7 +212,7 @@ const TicketDetails = () => {
         }
     };
 
-    // 5. Assign Technician
+    // Assign staff member
     const handleAssignChange = async (e) => {
         const assignedTo = e.target.value;
         setAssigning(true);
@@ -233,7 +228,7 @@ const TicketDetails = () => {
         }
     };
 
-    // 6. Warden SLA Deadline Adjustment
+    // SLA deadline adjustment
     const handleSetDeadline = async ({ hours, date }) => {
         setUpdatingDeadline(true);
         setActiveButton(hours !== undefined ? hours : 'custom');

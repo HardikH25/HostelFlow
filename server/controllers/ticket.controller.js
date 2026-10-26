@@ -272,7 +272,7 @@ export const assignTicket = async (req, res) => {
                 });
             }
 
-            // Enforce hostel scoping: A ticket for Neeladri can be assigned to Neeladri staff only!
+            // Enforce hostel scoping: tickets can only be assigned to staff within the same hostel
             const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
             const staffHostel = validStaff.hostel || (validStaff.location?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
 

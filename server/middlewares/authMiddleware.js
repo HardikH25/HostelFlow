@@ -11,6 +11,9 @@ export const isAuthenticated = async (req, res, next) => {
             });
         }
 
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET is not configured in server environment.");
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.userId).select('-password');
 

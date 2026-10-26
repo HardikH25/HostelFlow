@@ -154,7 +154,14 @@ app.use((err, req, res, next) => {
     });
 });
 
-// MongoDB Connection & Server Launch
+// Fail-fast environment variable validation
+if (!process.env.dbURL) {
+    throw new Error("dbURL is not configured in server environment.");
+}
+if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured in server environment.");
+}
+
 const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.dbURL)

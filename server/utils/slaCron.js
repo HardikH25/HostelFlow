@@ -2,9 +2,7 @@ import cron from 'node-cron';
 import Ticket from '../models/Ticket.js';
 import { emitToRoom } from './socket.js';
 
-/**
- * Priority Escalation Ladder
- */
+// Priority escalation mapping
 const getEscalatedPriority = (currentPriority) => {
     switch (currentPriority) {
         case 'Low':
@@ -19,9 +17,7 @@ const getEscalatedPriority = (currentPriority) => {
     }
 };
 
-/**
- * Core SLA Check & Escalation Engine
- */
+// Evaluate active tickets and escalate priority on SLA breach
 export const runSLACheck = async () => {
     try {
         const now = new Date();
@@ -102,9 +98,7 @@ export const runSLACheck = async () => {
     }
 };
 
-/**
- * Initialize node-cron schedule (Runs every 30 minutes)
- */
+// Schedule recurring SLA evaluation every 30 minutes
 export const initSLACron = () => {
     cron.schedule('*/30 * * * *', async () => {
         try {
