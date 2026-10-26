@@ -41,8 +41,21 @@ export const verifyTicketAccess = async (req, res, next) => {
             });
         }
 
-        // Wardens and Technicians bypass student ownership restriction
-        if (req.user.role === 'Warden' || req.user.role === 'Technician') {
+        // Wardens have full access
+        if (req.user.role === 'Warden') {
+            req.targetTicket = ticket;
+            return next();
+        }
+
+        // Technicians can only access tickets assigned to them
+        if (req.user.role === 'Technician') {
+            const isAssigned = ticket.assignedTo && ticket.assignedTo.toString() === req.user._id.toString();
+            if (!isAssigned) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied: You are only permitted to view tickets assigned to you.'
+                });
+            }
             req.targetTicket = ticket;
             return next();
         }

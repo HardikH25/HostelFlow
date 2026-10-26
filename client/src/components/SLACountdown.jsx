@@ -95,7 +95,7 @@ const SLACountdown = ({ ticket, compact = false }) => {
 
     return (
         <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 border-2 border-black font-mono font-bold text-xs rounded neo-shadow-sm ${isUrgent ? 'bg-[#FFD93D] text-black' : 'bg-white text-black'} ${compact ? 'text-[11px] py-0.5' : ''}`}>
-            <Clock className={`w-3.5 h-3.5 ${isUrgent ? 'animate-spin' : ''}`} />
+            <Clock className="w-3.5 h-3.5" />
             <span>
                 {String(timeLeft.hours).padStart(2, '0')}h {String(timeLeft.minutes).padStart(2, '0')}m {String(timeLeft.seconds).padStart(2, '0')}s
             </span>

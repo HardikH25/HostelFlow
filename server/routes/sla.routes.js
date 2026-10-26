@@ -6,6 +6,6 @@ import { verifyRole } from '../middlewares/rbacMiddleware.js';
 const router = express.Router();
 
 router.get('/metrics', isAuthenticated, getSLAMetrics);
-router.post('/trigger-check', isAuthenticated, verifyRole('Warden', 'Technician'), triggerSLACheckManual);
+router.post('/trigger-check', isAuthenticated, verifyRole('Warden'), triggerSLACheckManual);
 
 export default router;

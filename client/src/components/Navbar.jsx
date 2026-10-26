@@ -100,7 +100,7 @@ const Navbar = () => {
                         )}
 
                         {/* SLA Cron Manual Trigger (Staff only) */}
-                        {user && (user.role === 'Warden' || user.role === 'Technician') && (
+                        {user && user.role === 'Warden' && (
                             <div className="relative">
                                 <button
                                     onClick={handleTriggerCron}

@@ -13,10 +13,16 @@ export const SocketProvider = ({ children }) => {
     const [slaAlerts, setSlaAlerts] = useState([]);
 
     useEffect(() => {
-        // Connect to Socket server
+        if (!user) {
+            setConnected(false);
+            setSocket(null);
+            return;
+        }
+
+        // Connect to Socket server with polling-first handshake to prevent closed-before-established warnings
         const socketInstance = io(SOCKET_URL, {
             withCredentials: true,
-            transports: ['websocket', 'polling'],
+            transports: ['polling', 'websocket'],
             reconnectionAttempts: 5
         });
 
@@ -31,6 +37,10 @@ export const SocketProvider = ({ children }) => {
             setConnected(false);
         });
 
+        socketInstance.on('connect_error', () => {
+            // Handled gracefully during page transitions
+        });
+
         // SLA Breach Alert broadcast
         socketInstance.on('sla:breach_alert', (alertData) => {
             setSlaAlerts((prev) => [
@@ -39,16 +49,17 @@ export const SocketProvider = ({ children }) => {
                     ...alertData,
                     dismissed: false
                 },
-                ...prev.slice(0, 4) // Keep latest 5 alerts
+                ...prev.slice(0, 4)
             ]);
         });
 
         setSocket(socketInstance);
 
         return () => {
+            socketInstance.removeAllListeners();
             socketInstance.disconnect();
         };
-    }, [user?.role]);
+    }, [user?._id, user?.role]);
 
     const dismissAlert = useCallback((id) => {
         setSlaAlerts((prev) => prev.filter((a) => a.id !== id));

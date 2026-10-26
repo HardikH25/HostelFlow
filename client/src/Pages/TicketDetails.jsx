@@ -81,7 +81,7 @@ const TicketDetails = () => {
                 }
 
                 // If staff, load technicians
-                if (isStaff) {
+                if (user?.role === 'Warden') {
                     const staffRes = await axiosInstance.get('/users/staff');
                     if (isMounted) {
                         setStaffList(staffRes.data.staff || []);
@@ -400,11 +400,14 @@ const TicketDetails = () => {
                             </div>
                         )}
 
-                        {/* Staff Action Controls: Status, Assignee, Priority */}
-                        {isStaff && (
+                        {/* Warden Action Controls: Status, Assignee, SLA Time */}
+                        {user?.role === "Warden" && (
                             <div className="pt-4 border-t-2 border-black flex flex-col gap-3">
-                                <span className="font-mono text-xs font-black uppercase text-gray-700 tracking-wider">
-                                    Staff Management Controls
+                                <span className="font-mono text-xs font-black uppercase text-gray-700 tracking-wider flex items-center justify-between">
+                                    <span>Warden Management Controls</span>
+                                    <span className="text-[10px] font-mono font-bold bg-[#FFD93D] text-black px-1.5 py-0.5 border border-black rounded">
+                                        Admin
+                                    </span>
                                 </span>
 
                                 {/* Status Switcher */}
@@ -601,6 +604,40 @@ const TicketDetails = () => {
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        )}
+
+                        {/* Technician Work Console (Read-only status & assignment info) */}
+                        {user?.role === "Technician" && (
+                            <div className="pt-4 border-t-2 border-black flex flex-col gap-2.5">
+                                <span className="font-mono text-xs font-black uppercase text-gray-700 tracking-wider flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5">
+                                        <Wrench className="w-3.5 h-3.5 text-black" />
+                                        <span>Technician Work Console</span>
+                                    </span>
+                                    <span className="text-[10px] font-mono font-bold bg-[#38E54D] text-black px-2 py-0.5 border border-black rounded">
+                                        Assigned to You
+                                    </span>
+                                </span>
+                                <div className="p-3 bg-white border-2 border-black rounded-lg text-xs flex flex-col gap-2 neo-shadow-sm">
+                                    <div className="flex items-center justify-between font-mono">
+                                        <span className="text-gray-500 font-bold uppercase text-[10px]">Current Status:</span>
+                                        <span className="font-black text-black bg-black text-[#FFD93D] px-2 py-0.5 rounded text-[11px]">
+                                            {ticket.status}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-500 font-medium">Designated Scope:</span>
+                                        <span className="font-bold text-black">{ticket.category}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-500 font-medium">Room Location:</span>
+                                        <span className="font-bold text-black">{ticket.locationSnapshot || ticket.studentId?.location}</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 font-mono pt-2 border-t border-gray-200">
+                                        Status and assignment updates are managed by the Warden. Post progress notes and questions in the Discussion Thread below.
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>

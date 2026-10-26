@@ -92,6 +92,11 @@ export const getTickets = async (req, res) => {
             query.studentId = req.user._id;
         }
 
+        // Technician Role Restriction: only tickets assigned to this technician
+        if (req.user.role === 'Technician') {
+            query.assignedTo = req.user._id;
+        }
+
         // Optional query filters
         if (req.query.status) {
             query.status = req.query.status;

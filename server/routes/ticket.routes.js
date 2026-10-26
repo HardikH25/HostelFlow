@@ -21,8 +21,8 @@ router.get('/', isAuthenticated, getTickets);
 router.get('/:id', isAuthenticated, verifyTicketAccess, getTicketById);
 
 // Staff-only Status & Assignment Actions
-router.put('/:id/status', isAuthenticated, verifyRole('Warden', 'Technician'), updateTicketStatus);
-router.put('/:id/assign', isAuthenticated, verifyRole('Warden', 'Technician'), assignTicket);
+router.put('/:id/status', isAuthenticated, verifyRole('Warden'), updateTicketStatus);
+router.put('/:id/assign', isAuthenticated, verifyRole('Warden'), assignTicket);
 router.put('/:id/priority', isAuthenticated, verifyRole('Warden'), updateTicketPriority);
 router.put('/:id/deadline', isAuthenticated, verifyRole('Warden'), updateTicketDeadline);
 router.delete('/:id', isAuthenticated, verifyRole('Warden'), deleteTicket);
