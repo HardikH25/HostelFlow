@@ -6,10 +6,9 @@ import isAuthenticated from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 // Rate limiting to mitigate brute-force and credential stuffing attacks.
-// Generous window (500 attempts / 15 mins) to ensure automated evaluator test suites (Postman, Jest, etc.) are never blocked.
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'production' ? 100 : 500,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
