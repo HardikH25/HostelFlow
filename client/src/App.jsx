@@ -16,7 +16,7 @@ function AppContent() {
     const { user } = useAuth();
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#FFFDF5]">
+        <div className="min-h-screen flex flex-col bg-[#050505] text-[#f2f2f2]">
             {user && <Navbar />}
             <main className="flex-1">
                 <Routes>

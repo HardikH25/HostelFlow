@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import {
     Clock,
     ShieldCheck,
@@ -8,167 +8,302 @@ import {
     Building2,
     CheckCircle2,
     Users,
-    FileText,
     KeyRound,
-    Sparkles
-} from 'lucide-react';
+    Sparkles,
+    Check
+} from "lucide-react";
 
 const Landing = () => {
     return (
-        <div className="min-h-screen bg-[#FFFDF5] text-black font-sans selection:bg-[#FFD93D] selection:text-black">
+        <div className="min-h-screen bg-[#050505] text-[#f2f2f2] font-sans selection:bg-[#3fd6c6] selection:text-[#050505] relative overflow-hidden">
+            {/* Subtle radial light pool across hero */}
+            <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] pointer-events-none opacity-40"
+                style={{
+                    background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 45%, transparent 70%)"
+                }}
+            />
 
-            {/* Top Bar */}
-            <div className="border-b-3 border-black bg-white px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-                <div className="flex items-center gap-2">
-                    <div className="bg-[#FFD93D] border-2 border-black p-1.5 rounded neo-shadow-sm">
-                        <Layers className="w-5 h-5 text-black" />
-                    </div>
-                    <span className="font-extrabold text-xl tracking-tight text-black">
-                        HOSTEL<span className="bg-black text-[#FFD93D] px-1 rounded ml-0.5">FLOW</span>
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <Link
-                        to="/login"
-                        className="neo-btn bg-white hover:bg-gray-100 text-black text-xs px-4 py-2"
-                    >
-                        Sign In
-                    </Link>
-                    <Link
-                        to="/signup"
-                        className="neo-btn bg-[#FFD93D] text-black text-xs px-4 py-2 font-black uppercase"
-                    >
-                        Create Account
-                    </Link>
-                </div>
-            </div>
-
-            {/* Hero Section */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16">
-                <div className="text-center max-w-3xl mx-auto mb-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFD93D] border-2 border-black rounded-full font-mono text-xs font-black uppercase neo-shadow-sm mb-4">
-                        <Building2 className="w-3.5 h-3.5 text-black" />
-                        <span>Neeladri & Velankani Campus Living Operations</span>
+            {/* Top Navigation */}
+            <header className="border-b border-[#222222] bg-[#0e0e0e]/80 backdrop-blur-md sticky top-0 z-40">
+                <div className="max-w-[1360px] mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center">
+                            <Layers className="w-4 h-4 text-[#f2f2f2]" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="font-semibold text-base tracking-tight text-[#f2f2f2]">
+                                HOSTELFLOW
+                            </span>
+                            <span className="text-[11px] font-mono text-[#8a8d91] hidden sm:inline-block border-l border-[#222222] pl-2">
+                                Campus Operations
+                            </span>
+                        </div>
                     </div>
 
-                    <h1 className="text-4xl sm:text-6xl font-black text-black tracking-tight leading-[1.05] mb-6">
-                        Hostel Issue Resolution with <span className="underline decoration-[#FF5252] decoration-4">Zero Compromise</span> SLA.
-                    </h1>
-
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium max-w-2xl mx-auto mb-8">
-                        Production-grade maintenance infrastructure for campus residents. Automated 30-minute SLA evaluations, priority escalations, real-time Socket.io bi-directional messaging, and verifiable document attachments.
-                    </p>
-
-                    <div className="flex flex-wrap items-center justify-center gap-4">
-                        <Link
-                            to="/signup"
-                            className="neo-btn bg-[#FFD93D] text-black text-sm px-6 py-3 font-black uppercase flex items-center gap-2"
-                        >
-                            <span>Register as Student</span>
-                            <ArrowRight className="w-4 h-4" />
-                        </Link>
+                    <div className="flex items-center gap-3">
                         <Link
                             to="/login"
-                            className="neo-btn bg-black text-[#FFD93D] text-sm px-6 py-3 font-black uppercase flex items-center gap-2"
+                            className="text-xs font-medium text-[#a6a9ad] hover:text-[#f2f2f2] px-4 py-2 rounded-full border border-[#222222] hover:border-[#303030] transition-colors"
                         >
-                            <span>Access Operations Portal</span>
-                            <ArrowRight className="w-4 h-4" />
+                            Sign In
+                        </Link>
+                        <Link
+                            to="/signup"
+                            className="text-xs font-medium bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white px-4 py-2 rounded-full transition-colors flex items-center gap-1.5"
+                        >
+                            <span>Create Account</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
                 </div>
+            </header>
 
-                {/* Architecture Highlights Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-                    <div className="neo-card p-6 bg-white flex flex-col justify-between">
-                        <div>
-                            <div className="w-10 h-10 bg-[#FFD93D] border-2 border-black rounded-lg flex items-center justify-center mb-4 neo-shadow-sm">
-                                <Clock className="w-5 h-5 text-black" />
-                            </div>
-                            <h3 className="text-lg font-black text-black mb-2">Automated SLA Cron Engine</h3>
-                            <p className="text-xs text-gray-600 leading-relaxed">
-                                Evaluates active tickets every 30 minutes via <code className="bg-gray-100 px-1 py-0.5 rounded border text-black font-mono">node-cron</code>. Unresolved tickets automatically escalate from Low → Medium → High → Critical and broadcast live WebSocket breach alarms.
-                            </p>
+            {/* Main Content */}
+            <main className="max-w-[1360px] mx-auto px-6 md:px-12 pt-16 pb-24 relative z-10">
+                {/* Hero 12-Column Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
+                    {/* Left: Opening Statement */}
+                    <div className="lg:col-span-7 flex flex-col justify-center">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141414] border border-[#222222] text-[11px] font-mono text-[#a6a9ad] w-fit mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6] animate-pulse" />
+                            <span>Neeladri &amp; Velankani Campus Living Operations</span>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200 text-[11px] font-mono font-bold text-gray-500">
-                            Automatic SLA Pause & Resume
+
+                        <h1 className="text-4xl sm:text-6xl xl:text-7xl font-normal text-[#f2f2f2] tracking-tight leading-[1.05] mb-6">
+                            Hostel resolution with guaranteed timelines.
+                        </h1>
+
+                        <p className="text-base sm:text-lg text-[#a6a9ad] leading-relaxed font-normal max-w-xl mb-8">
+                            Modern facility management for campus residents. Continuous resolution monitoring, automated priority escalation, instant bi-directional messaging, and verifiable documentation.
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-3">
+                            <Link
+                                to="/signup"
+                                className="px-6 py-3 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium flex items-center gap-2 transition-all shadow-sm"
+                            >
+                                <span>Register as Student</span>
+                                <ArrowRight className="w-4 h-4" />
+                            </Link>
+                            <Link
+                                to="/login"
+                                className="px-6 py-3 rounded-full bg-[#0e0e0e] border border-[#222222] hover:border-[#303030] text-[#f2f2f2] text-xs font-medium flex items-center gap-2 transition-colors"
+                            >
+                                <span>Staff &amp; Warden Access</span>
+                                <ArrowRight className="w-4 h-4 text-[#8a8d91]" />
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="neo-card p-6 bg-white flex flex-col justify-between">
-                        <div>
-                            <div className="w-10 h-10 bg-[#FF5252] border-2 border-black rounded-lg flex items-center justify-center mb-4 neo-shadow-sm">
-                                <MessageSquare className="w-5 h-5 text-white" />
+                    {/* Right: Graphite Product Object Preview */}
+                    <div className="lg:col-span-5">
+                        <div className="rounded-[6px] bg-[#0e0e0e] border border-[#222222] p-5 shadow-2xl relative">
+                            {/* Window header */}
+                            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#222222]">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
+                                    <span className="text-[11px] font-mono text-[#8a8d91] ml-2">Console / Live Dispatch</span>
+                                </div>
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[10px] font-mono text-[#3fd6c6]">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6]" />
+                                    Live Sync
+                                </span>
                             </div>
-                            <h3 className="text-lg font-black text-black mb-2">Real-Time WebSockets & Notes</h3>
-                            <p className="text-xs text-gray-600 leading-relaxed">
-                                Bi-directional <code className="bg-gray-100 px-1 py-0.5 rounded border text-black font-mono">Socket.io</code> ticket channels. Staff can post hidden internal notes with strict RBAC filtering to coordinate repairs without confusing students.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200 text-[11px] font-mono font-bold text-gray-500">
-                            Instant zero-refresh delivery
-                        </div>
-                    </div>
 
-                    <div className="neo-card p-6 bg-white flex flex-col justify-between">
-                        <div>
-                            <div className="w-10 h-10 bg-[#38E54D] border-2 border-black rounded-lg flex items-center justify-center mb-4 neo-shadow-sm">
-                                <ShieldCheck className="w-5 h-5 text-black" />
+                            {/* Ticket preview card */}
+                            <div className="space-y-3">
+                                <div className="p-3.5 rounded-[6px] bg-[#141414] border border-[#222222]">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[10px] font-mono text-[#8a8d91]">#HF-8291 • Electrical</span>
+                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/40 text-emerald-400">
+                                            3h 42m remaining
+                                        </span>
+                                    </div>
+                                    <p className="text-xs font-medium text-[#f2f2f2] mb-1">
+                                        Ceiling fan regulator short-circuit in Room B2-304
+                                    </p>
+                                    <div className="flex items-center justify-between text-[11px] text-[#8a8d91] pt-2 border-t border-[#1f1f1f]">
+                                        <span>Neeladri Hostel • Block B</span>
+                                        <span className="text-[#a6a9ad]">Assigned: Ramesh K.</span>
+                                    </div>
+                                </div>
+
+                                <div className="p-3.5 rounded-[6px] bg-[#141414] border border-[#222222]">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[10px] font-mono text-[#8a8d91]">#HF-8288 • Plumbing</span>
+                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/60 border border-amber-800/40 text-amber-300">
+                                            Paused (Awaiting Reply)
+                                        </span>
+                                    </div>
+                                    <p className="text-xs font-medium text-[#f2f2f2] mb-1">
+                                        Water heater pipe leakage in 3rd floor bathroom
+                                    </p>
+                                    <div className="flex items-center justify-between text-[11px] text-[#8a8d91] pt-2 border-t border-[#1f1f1f]">
+                                        <span>Velankani Hostel • Block A</span>
+                                        <span className="text-[#a6a9ad]">Assigned: Suresh V.</span>
+                                    </div>
+                                </div>
+
+                                <div className="p-3 rounded-[6px] bg-[#090909] border border-[#1a1a1a] flex items-center justify-between text-[11px] text-[#8a8d91]">
+                                    <span className="flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5 text-[#3fd6c6]" />
+                                        <span>Resolution Sweeps Active</span>
+                                    </span>
+                                    <span className="font-mono text-[#a6a9ad]">Zero Breaches Today</span>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-black text-black mb-2">Interactive Warden Kanban</h3>
-                            <p className="text-xs text-gray-600 leading-relaxed">
-                                Drag-and-drop workflow built with <code className="bg-gray-100 px-1 py-0.5 rounded border text-black font-mono">@hello-pangea/dnd</code>. Move tickets between Open, Assigned, Awaiting-Student-Reply, and Resolved with live visual alerts.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200 text-[11px] font-mono font-bold text-gray-500">
-                            HttpOnly JWT Cookie Auth
                         </div>
                     </div>
                 </div>
 
-                {/* Production Role & Security Architecture Showcase */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                {/* Ruled Row of Facts */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-y border-[#222222] mb-20">
+                    <div>
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                            100%
+                        </div>
+                        <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
+                            Accountability Coverage
+                        </div>
+                    </div>
+                    <div>
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                            30 Min
+                        </div>
+                        <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
+                            Automated Sweeps
+                        </div>
+                    </div>
+                    <div>
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                            2 Hostels
+                        </div>
+                        <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
+                            Neeladri &amp; Velankani
+                        </div>
+                    </div>
+                    <div>
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                            Zero Delay
+                        </div>
+                        <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
+                            Synchronized Updates
+                        </div>
+                    </div>
+                </div>
 
-                    {/* Student Resident Portal Card */}
-                    <div className="neo-card p-8 bg-white border-3 border-black flex flex-col justify-between">
+                {/* 3-Column Core Capabilities Grid */}
+                <div className="mb-20">
+                    <div className="max-w-xl mb-10">
+                        <span className="text-xs font-mono uppercase tracking-wider text-[#3fd6c6] block mb-2">
+                            Infrastructure Architecture
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight">
+                            Engineered for rapid campus issue resolution.
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="p-6 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col justify-between">
+                            <div>
+                                <div className="w-9 h-9 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center mb-5">
+                                    <Clock className="w-4 h-4 text-[#f2f2f2]" />
+                                </div>
+                                <h3 className="text-base font-medium text-[#f2f2f2] mb-2">
+                                    Guaranteed Resolution Timelines
+                                </h3>
+                                <p className="text-xs text-[#a6a9ad] leading-relaxed">
+                                    Continuous background evaluation monitors every active maintenance request. Tickets nearing deadlines escalate automatically to guarantee swift resolution.
+                                </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-[#1f1f1f] text-[11px] font-mono text-[#8a8d91]">
+                                Auto-pause on clarification
+                            </div>
+                        </div>
+
+                        <div className="p-6 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col justify-between">
+                            <div>
+                                <div className="w-9 h-9 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center mb-5">
+                                    <MessageSquare className="w-4 h-4 text-[#f2f2f2]" />
+                                </div>
+                                <h3 className="text-base font-medium text-[#f2f2f2] mb-2">
+                                    Real-Time Live Coordination
+                                </h3>
+                                <p className="text-xs text-[#a6a9ad] leading-relaxed">
+                                    Instant communication between students, wardens, and technicians. Staff can record private internal notes to diagnose and coordinate repairs effectively.
+                                </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-[#1f1f1f] text-[11px] font-mono text-[#8a8d91]">
+                                Instant zero-refresh sync
+                            </div>
+                        </div>
+
+                        <div className="p-6 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col justify-between">
+                            <div>
+                                <div className="w-9 h-9 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center mb-5">
+                                    <ShieldCheck className="w-4 h-4 text-[#f2f2f2]" />
+                                </div>
+                                <h3 className="text-base font-medium text-[#f2f2f2] mb-2">
+                                    Streamlined Dispatch Operations
+                                </h3>
+                                <p className="text-xs text-[#a6a9ad] leading-relaxed">
+                                    Visual board allowing hostel administrators to rapidly route, assign, and track maintenance tasks across all campus blocks with verified role permissions.
+                                </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-[#1f1f1f] text-[11px] font-mono text-[#8a8d91]">
+                                Secure role boundaries
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Role Portals Showcase */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                    {/* Student Portal Card */}
+                    <div className="p-8 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col justify-between">
                         <div>
                             <div className="flex items-center justify-between mb-4">
-                                <span className="font-mono text-xs font-black bg-[#FFD93D] text-black px-2.5 py-1 rounded uppercase border border-black">
+                                <span className="font-mono text-[11px] text-[#a6a9ad] uppercase tracking-wider">
                                     Resident Services
                                 </span>
-                                <span className="text-xs font-bold text-gray-500">Neeladri & Velankani</span>
+                                <span className="text-[11px] font-mono text-[#8a8d91]">
+                                    Neeladri &amp; Velankani
+                                </span>
                             </div>
-                            <h2 className="text-2xl font-black text-black mb-3">
+                            <h2 className="text-xl sm:text-2xl font-normal text-[#f2f2f2] tracking-tight mb-3">
                                 Student Living Portal
                             </h2>
-                            <p className="text-xs text-gray-600 leading-relaxed mb-6">
-                                Designed specifically for hostel boarders to submit maintenance requests with verified room numbers, attach photo or PDF documentation, and track SLA countdown clocks in real-time.
+                            <p className="text-xs text-[#a6a9ad] leading-relaxed mb-6">
+                                Designed specifically for hostel boarders to submit maintenance requests with verified room numbers, attach photo or PDF documentation, and track resolution timelines live.
                             </p>
 
-                            <div className="space-y-3 font-mono text-xs text-gray-700">
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>Verified hostel & room numbering structure</span>
+                            <div className="space-y-3 font-mono text-xs text-[#a6a9ad]">
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                                    <span>Verified hostel &amp; room numbering structure</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
                                     <span>Upload repair photos, bills, and PDF documents</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>Real-time chat with technicians over WebSockets</span>
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                                    <span>Direct live coordination with maintenance staff</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>Auto-resume paused SLA upon replying to queries</span>
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                                    <span>Auto-resume paused timelines upon replying</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t-2 border-black/10">
+                        <div className="mt-8 pt-6 border-t border-[#1f1f1f]">
                             <Link
                                 to="/signup"
-                                className="neo-btn bg-[#FFD93D] text-black text-xs py-3 w-full font-black uppercase text-center block"
+                                className="w-full py-3 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium text-center block transition-colors"
                             >
                                 Register Student Account
                             </Link>
@@ -176,58 +311,65 @@ const Landing = () => {
                     </div>
 
                     {/* Warden & Staff Command Card */}
-                    <div className="neo-card p-8 bg-white border-3 border-black flex flex-col justify-between">
+                    <div className="p-8 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col justify-between">
                         <div>
                             <div className="flex items-center justify-between mb-4">
-                                <span className="font-mono text-xs font-black bg-[#FF5252] text-white px-2.5 py-1 rounded uppercase border border-black">
+                                <span className="font-mono text-[11px] text-[#a6a9ad] uppercase tracking-wider">
                                     Administrative Command
                                 </span>
-                                <span className="text-xs font-bold text-gray-500">Wardens & Technicians</span>
+                                <span className="text-[11px] font-mono text-[#8a8d91]">
+                                    Wardens &amp; Technicians
+                                </span>
                             </div>
-                            <h2 className="text-2xl font-black text-black mb-3">
+                            <h2 className="text-xl sm:text-2xl font-normal text-[#f2f2f2] tracking-tight mb-3">
                                 Hostel Staff Operations
                             </h2>
-                            <p className="text-xs text-gray-600 leading-relaxed mb-6">
-                                Comprehensive workflow automation for Chief Wardens, Assistant Wardens, and Maintenance Technicians with strict cryptographic access control.
+                            <p className="text-xs text-[#a6a9ad] leading-relaxed mb-6">
+                                Comprehensive workflow automation for Chief Wardens, Assistant Wardens, and Maintenance Technicians with strict hostel data isolation.
                             </p>
 
-                            <div className="space-y-3 font-mono text-xs text-gray-700">
-                                <div className="flex items-start gap-2">
-                                    <KeyRound className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                            <div className="space-y-3 font-mono text-xs text-[#a6a9ad]">
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
                                     <span>Zero Privilege Escalation (Secured via Master Staff Key)</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>Drag & Drop Kanban ticket lifecycle dispatch</span>
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                                    <span>Interactive visual ticket dispatch and assignment</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
                                     <span>Internal staff notes hidden from students</span>
                                 </div>
-                                <div className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span>Wardens can onboard assistant wardens & technicians</span>
+                                <div className="flex items-start gap-2.5">
+                                    <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                                    <span>Wardens onboard assistant wardens &amp; technicians</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t-2 border-black/10">
+                        <div className="mt-8 pt-6 border-t border-[#1f1f1f]">
                             <Link
                                 to="/login"
-                                className="neo-btn bg-black text-[#FFD93D] text-xs py-3 w-full font-black uppercase text-center block"
+                                className="w-full py-3 rounded-full bg-[#141414] border border-[#222222] hover:border-[#303030] text-[#f2f2f2] text-xs font-medium text-center block transition-colors"
                             >
-                                Staff & Warden Sign In
+                                Staff &amp; Warden Sign In
                             </Link>
                         </div>
                     </div>
-
                 </div>
-
-            </div>
+            </main>
 
             {/* Footer */}
-            <footer className="border-t-3 border-black bg-white py-6 text-center text-xs font-mono font-bold text-gray-600">
-                HOSTELFLOW // Scaler Campus Operations Infrastructure • All rights reserved
+            <footer className="border-t border-[#222222] bg-[#080808] py-8">
+                <div className="max-w-[1360px] mx-auto px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#8a8d91]">
+                    <div>
+                        HOSTELFLOW // Campus Issue Resolution Infrastructure
+                    </div>
+                    <div>
+                        Neeladri &amp; Velankani Hostels • All rights reserved
+                    </div>
+                </div>
             </footer>
         </div>
     );

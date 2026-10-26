@@ -1,25 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useSocket } from '../context/SocketContext';
-import { axiosInstance } from '../axiosCalls/axios';
-import KanbanBoard from '../components/KanbanBoard';
-import TicketCard from '../components/TicketCard';
-import CreateTicketModal from '../components/CreateTicketModal';
-import AddStaffModal from '../components/AddStaffModal';
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
+import { axiosInstance } from "../axiosCalls/axios";
+import KanbanBoard from "../components/KanbanBoard";
+import TicketCard from "../components/TicketCard";
+import CreateTicketModal from "../components/CreateTicketModal";
+import AddStaffModal from "../components/AddStaffModal";
 import {
     PlusCircle,
     LayoutGrid,
     Kanban,
     RefreshCw,
-    AlertOctagon,
     Clock,
     CheckCircle2,
-    Shield,
-    Filter,
     Search,
     UserPlus,
-    Building2
-} from 'lucide-react';
+    AlertCircle,
+    Inbox
+} from "lucide-react";
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -27,25 +25,27 @@ const Dashboard = () => {
 
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [viewMode, setViewMode] = useState('kanban'); // 'kanban' or 'grid'
-    const [filterCategory, setFilterCategory] = useState('All');
-    const [filterPriority, setFilterPriority] = useState('All');
-    const [filterHostel, setFilterHostel] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [viewMode, setViewMode] = useState("kanban"); // "kanban" or "grid"
+    const [filterCategory, setFilterCategory] = useState("All");
+    const [filterPriority, setFilterPriority] = useState("All");
+    const [filterHostel, setFilterHostel] = useState("All");
+    const [filterStatus, setFilterStatus] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
 
-    const isStaff = user?.role === 'Warden' || user?.role === 'Technician';
+    const isStaff = user?.role === "Warden" || user?.role === "Technician";
+    const isWarden = user?.role === "Warden";
 
     const fetchTickets = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await axiosInstance.get('/tickets');
+            const res = await axiosInstance.get("/tickets");
             if (res.data?.success) {
                 setTickets(res.data.tickets || []);
             }
         } catch (err) {
-            console.error('Failed to load tickets:', err);
+            console.error("Failed to load tickets:", err);
         } finally {
             setLoading(false);
         }
@@ -55,141 +55,160 @@ const Dashboard = () => {
         fetchTickets();
     }, [fetchTickets]);
 
-    // Real-time WebSocket updates: tickets created or updated
+    // Live WebSocket updates
     useEffect(() => {
         if (!socket) return;
 
         const handleTicketCreated = (newTicket) => {
-            setTickets((prev) => [newTicket, ...prev.filter((t) => t._id !== newTicket._id)]);
+            setTickets((prev) => {
+                if (prev.some((t) => t._id === newTicket._id)) return prev;
+                // If technician, only add if assigned to them
+                if (user?.role === "Technician") {
+                    const isAssigned = newTicket.assignedTo?._id === user._id || newTicket.assignedTo === user._id;
+                    if (!isAssigned) return prev;
+                }
+                return [newTicket, ...prev];
+            });
         };
 
         const handleTicketUpdated = (updatedTicket) => {
-            setTickets((prev) =>
-                prev.map((t) => (t._id === updatedTicket._id ? updatedTicket : t))
-            );
+            setTickets((prev) => {
+                // If technician, remove if unassigned from them
+                if (user?.role === "Technician") {
+                    const isAssigned = updatedTicket.assignedTo?._id === user._id || updatedTicket.assignedTo === user._id;
+                    if (!isAssigned) {
+                        return prev.filter((t) => t._id !== updatedTicket._id);
+                    }
+                }
+                const exists = prev.some((t) => t._id === updatedTicket._id);
+                if (exists) {
+                    return prev.map((t) => (t._id === updatedTicket._id ? updatedTicket : t));
+                }
+                return [updatedTicket, ...prev];
+            });
         };
 
-        const handleTicketDeleted = ({ ticketId }) => {
-            setTickets((prev) => prev.filter((t) => t._id !== ticketId));
-        };
-
-        socket.on('ticket:created', handleTicketCreated);
-        socket.on('ticket:updated', handleTicketUpdated);
-        socket.on('ticket:deleted', handleTicketDeleted);
+        socket.on("ticket:created", handleTicketCreated);
+        socket.on("ticket:updated", handleTicketUpdated);
 
         return () => {
-            socket.off('ticket:created', handleTicketCreated);
-            socket.off('ticket:updated', handleTicketUpdated);
-            socket.off('ticket:deleted', handleTicketDeleted);
+            socket.off("ticket:created", handleTicketCreated);
+            socket.off("ticket:updated", handleTicketUpdated);
         };
-    }, [socket]);
+    }, [socket, user?._id, user?.role]);
 
-    // Handle drag-and-drop status update in Kanban
-    const handleStatusChange = async (ticketId, newStatus) => {
+    // Handle Kanban Drag & Drop Status Change (Warden only)
+    const handleStatusUpdate = async (ticketId, newStatus) => {
+        if (!isWarden) return;
         try {
-            await axiosInstance.put(`/tickets/${ticketId}/status`, { status: newStatus });
+            const res = await axiosInstance.put(`/tickets/${ticketId}/status`, { status: newStatus });
+            if (res.data?.success) {
+                setTickets((prev) =>
+                    prev.map((t) => (t._id === ticketId ? res.data.ticket : t))
+                );
+            }
         } catch (err) {
-            console.error('Failed to update status:', err);
-            fetchTickets(); // rollback if error
+            alert(err.response?.data?.message || "Failed to update issue status.");
+            fetchTickets();
         }
     };
 
-    // Filter tickets
+    // Filter Logic
     const filteredTickets = tickets.filter((ticket) => {
-        const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
-        const matchesHostel = filterHostel === 'All' || ticketHostel === filterHostel;
-        const matchesCategory = filterCategory === 'All' || ticket.category === filterCategory;
-        const matchesPriority = filterPriority === 'All' || ticket.priority === filterPriority;
+        const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel");
+        const matchesHostel = filterHostel === "All" || ticketHostel === filterHostel;
+        const matchesCategory = filterCategory === "All" || ticket.category === filterCategory;
+        const matchesPriority = filterPriority === "All" || ticket.priority === filterPriority;
+        const matchesStatus = filterStatus === "All" || ticket.status === filterStatus;
         const matchesSearch =
-            searchQuery.trim() === '' ||
+            searchQuery.trim() === "" ||
             ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ticket.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (ticket.locationSnapshot && ticket.locationSnapshot.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        return matchesHostel && matchesCategory && matchesPriority && matchesSearch;
+        return matchesHostel && matchesCategory && matchesPriority && matchesStatus && matchesSearch;
     });
 
     // Compute Metrics
     const totalCount = tickets.length;
-    const breachedCount = tickets.filter(
-        (t) => t.slaBreached || (t.status !== 'Resolved' && t.status !== 'Awaiting-Student-Reply' && new Date() > new Date(t.slaDeadline))
+    const overdueCount = tickets.filter(
+        (t) => t.slaBreached || (t.status !== "Resolved" && t.status !== "Awaiting-Student-Reply" && new Date() > new Date(t.slaDeadline))
     ).length;
-    const resolvedCount = tickets.filter((t) => t.status === 'Resolved').length;
-    const awaitingReplyCount = tickets.filter((t) => t.status === 'Awaiting-Student-Reply').length;
-    const activeCount = tickets.filter((t) => t.status === 'Open' || t.status === 'Assigned').length;
+    const resolvedCount = tickets.filter((t) => t.status === "Resolved").length;
+    const awaitingReplyCount = tickets.filter((t) => t.status === "Awaiting-Student-Reply").length;
+    const activeCount = tickets.filter((t) => t.status === "Open" || t.status === "Assigned").length;
 
     return (
-        <div className="min-h-[calc(100vh-4.5rem)] bg-[#FFFDF5] p-4 sm:p-6 lg:p-8">
+        <div className="min-h-[calc(100vh-4rem)] bg-[#050505] p-4 sm:p-6 lg:p-8 text-[#f2f2f2]">
             <div className="max-w-7xl mx-auto flex flex-col gap-6">
                 
-                {/* Dashboard Top Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b-3 border-black">
+                {/* Header Row */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#222222]">
                     <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="font-mono text-xs font-black bg-black text-[#FFD93D] px-2 py-0.5 rounded uppercase">
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <span className="font-mono text-[10px] text-[#3fd6c6] bg-[#0e0e0e] border border-[#222222] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                                 {user?.role} Portal
                             </span>
-                            <span className="text-xs text-gray-500 font-medium">
+                            <span className="text-xs text-[#717478]">
                                 {user?.location}
                             </span>
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-                            Hostel Issue Operations Hub
+                        <h1 className="text-2xl sm:text-3xl font-medium text-[#f2f2f2] tracking-tight">
+                            Campus Maintenance Operations
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
                         <button
                             onClick={fetchTickets}
-                            title="Refresh ticket queue"
-                            className="neo-btn bg-white hover:bg-gray-100 text-black text-xs px-3 py-2"
+                            title="Refresh issue queue"
+                            className="neo-btn bg-[#0e0e0e] text-[#a6a9ad] hover:text-[#f2f2f2] border border-[#222222] hover:border-[#303030] px-3.5 py-1.5 text-xs rounded-full"
                         >
-                            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                            <span className="font-bold">Sync</span>
+                            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                            <span>Sync</span>
                         </button>
 
-                        {/* Student Action: Raise Ticket */}
-                        {user?.role === 'Student' && (
+                        {/* Student Action: Report Issue */}
+                        {user?.role === "Student" && (
                             <button
                                 onClick={() => setIsCreateModalOpen(true)}
-                                className="neo-btn bg-[#FFD93D] text-black text-xs px-4 py-2 font-black uppercase flex items-center gap-1.5"
+                                className="neo-btn bg-[#f2f2f2] hover:bg-white text-[#0a0a0a] text-xs px-4 py-1.5 rounded-full font-medium flex items-center gap-1.5 shadow-sm"
                             >
-                                <PlusCircle className="w-4 h-4" />
-                                <span>Report Hostel Issue</span>
+                                <PlusCircle className="w-3.5 h-3.5" />
+                                <span>Report Maintenance Issue</span>
                             </button>
                         )}
 
                         {/* Warden Action: Onboard Staff */}
-                        {user?.role === 'Warden' && (
+                        {user?.role === "Warden" && (
                             <button
                                 onClick={() => setIsAddStaffOpen(true)}
-                                className="neo-btn bg-[#FF5252] text-white text-xs px-3 py-2 font-black uppercase flex items-center gap-1.5"
-                                title="Onboard new Technician or Assistant Warden"
+                                className="neo-btn bg-[#0e0e0e] hover:bg-[#141414] text-[#f2f2f2] border border-[#222222] hover:border-[#303030] text-xs px-4 py-1.5 rounded-full font-medium flex items-center gap-1.5"
                             >
-                                <UserPlus className="w-4 h-4" />
+                                <UserPlus className="w-3.5 h-3.5 text-[#3fd6c6]" />
                                 <span>Onboard Staff</span>
                             </button>
                         )}
 
                         {/* Staff Action: View Mode Toggle */}
                         {isStaff && (
-                            <div className="flex items-center bg-gray-200 p-1 border-2 border-black rounded neo-shadow-sm">
+                            <div className="flex items-center bg-[#0e0e0e] p-0.5 border border-[#222222] rounded-full">
                                 <button
-                                    onClick={() => setViewMode('kanban')}
-                                    className={`px-3 py-1 text-xs font-bold rounded flex items-center gap-1.5 transition-colors ${
-                                        viewMode === 'kanban' ? 'bg-black text-[#FFD93D]' : 'text-gray-700 hover:text-black'
+                                    onClick={() => setViewMode("kanban")}
+                                    className={`px-3 py-1 text-xs rounded-full flex items-center gap-1.5 transition-colors ${
+                                        viewMode === "kanban" ? "bg-[#f2f2f2] text-[#0a0a0a] font-medium" : "text-[#717478] hover:text-[#f2f2f2]"
                                     }`}
                                 >
-                                    <Kanban className="w-3.5 h-3.5" />
-                                    <span>Kanban</span>
+                                    <Kanban className="w-3 h-3" />
+                                    <span>Board</span>
                                 </button>
                                 <button
-                                    onClick={() => setViewMode('grid')}
-                                    className={`px-3 py-1 text-xs font-bold rounded flex items-center gap-1.5 transition-colors ${
-                                        viewMode === 'grid' ? 'bg-black text-[#FFD93D]' : 'text-gray-700 hover:text-black'
+                                    onClick={() => setViewMode("grid")}
+                                    className={`px-3 py-1 text-xs rounded-full flex items-center gap-1.5 transition-colors ${
+                                        viewMode === "grid" ? "bg-[#f2f2f2] text-[#0a0a0a] font-medium" : "text-[#717478] hover:text-[#f2f2f2]"
                                     }`}
                                 >
-                                    <LayoutGrid className="w-3.5 h-3.5" />
+                                    <LayoutGrid className="w-3 h-3" />
                                     <span>Grid</span>
                                 </button>
                             </div>
@@ -197,149 +216,161 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Metrics Summary Strip */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="neo-card p-4 flex items-center justify-between">
+                {/* Metrics Summary Strip (Minimalist Graphite Panels) */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div className="dp-panel p-4 flex items-center justify-between">
                         <div>
-                            <span className="text-[11px] font-mono font-bold text-gray-500 uppercase block">Active Queue</span>
-                            <span className="text-2xl font-black text-black">{activeCount}</span>
+                            <span className="text-[10px] font-mono text-[#717478] uppercase tracking-wider block mb-1">Active Queue</span>
+                            <span className="text-2xl font-light text-[#f2f2f2]">{activeCount}</span>
                         </div>
-                        <div className="p-2.5 bg-blue-100 text-blue-800 border-2 border-black rounded">
-                            <Clock className="w-5 h-5" />
+                        <div className="p-2 bg-[#141414] border border-[#222222] rounded-full text-[#a6a9ad]">
+                            <Clock className="w-4 h-4" />
                         </div>
                     </div>
 
-                    <div className="neo-card p-4 flex items-center justify-between border-2 border-red-500 bg-red-50/40">
+                    <div className={`dp-panel p-4 flex items-center justify-between ${overdueCount > 0 ? "border-red-950/80 bg-red-950/10" : ""}`}>
                         <div>
-                            <span className="text-[11px] font-mono font-bold text-red-600 uppercase block">SLA Breached</span>
-                            <span className="text-2xl font-black text-red-600">{breachedCount}</span>
+                            <span className={`text-[10px] font-mono uppercase tracking-wider block mb-1 ${overdueCount > 0 ? "text-red-400" : "text-[#717478]"}`}>
+                                Target Overdue
+                            </span>
+                            <span className={`text-2xl font-light ${overdueCount > 0 ? "text-red-300" : "text-[#f2f2f2]"}`}>
+                                {overdueCount}
+                            </span>
                         </div>
-                        <div className="p-2.5 bg-red-100 text-red-700 border-2 border-red-600 rounded animate-pulse">
-                            <AlertOctagon className="w-5 h-5" />
+                        <div className={`p-2 rounded-full border ${overdueCount > 0 ? "bg-red-950/40 border-red-900/60 text-red-400" : "bg-[#141414] border-[#222222] text-[#717478]"}`}>
+                            <AlertCircle className="w-4 h-4" />
                         </div>
                     </div>
 
-                    <div className="neo-card p-4 flex items-center justify-between">
+                    <div className="dp-panel p-4 flex items-center justify-between">
                         <div>
-                            <span className="text-[11px] font-mono font-bold text-amber-700 uppercase block">SLA Paused</span>
-                            <span className="text-2xl font-black text-amber-700">{awaitingReplyCount}</span>
+                            <span className="text-[10px] font-mono text-[#717478] uppercase tracking-wider block mb-1">Awaiting Reply</span>
+                            <span className="text-2xl font-light text-[#f2f2f2]">{awaitingReplyCount}</span>
                         </div>
-                        <div className="p-2.5 bg-amber-100 text-amber-800 border-2 border-black rounded">
-                            <Clock className="w-5 h-5" />
+                        <div className="p-2 bg-[#141414] border border-[#222222] rounded-full text-amber-400/80">
+                            <Clock className="w-4 h-4" />
                         </div>
                     </div>
 
-                    <div className="neo-card p-4 flex items-center justify-between">
+                    <div className="dp-panel p-4 flex items-center justify-between">
                         <div>
-                            <span className="text-[11px] font-mono font-bold text-emerald-700 uppercase block">Resolved</span>
-                            <span className="text-2xl font-black text-emerald-700">{resolvedCount}</span>
+                            <span className="text-[10px] font-mono text-[#717478] uppercase tracking-wider block mb-1">Resolved</span>
+                            <span className="text-2xl font-light text-[#f2f2f2]">{resolvedCount}</span>
                         </div>
-                        <div className="p-2.5 bg-emerald-100 text-emerald-800 border-2 border-black rounded">
-                            <CheckCircle2 className="w-5 h-5" />
+                        <div className="p-2 bg-[#141414] border border-[#222222] rounded-full text-emerald-400/80">
+                            <CheckCircle2 className="w-4 h-4" />
                         </div>
                     </div>
                 </div>
 
-                {/* Filters and Search Bar */}
-                <div className="neo-card p-3.5 flex flex-col md:flex-row items-center justify-between gap-3 bg-white">
+                {/* Filter and Search Bar */}
+                <div className="dp-panel p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                    
                     {/* Search Input */}
-                    <div className="relative w-full md:w-80">
-                        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+                    <div className="relative flex-1">
+                        <Search className="w-3.5 h-3.5 text-[#55585d] absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                             type="text"
-                            placeholder="Search title, room, or issue..."
+                            placeholder="Search by issue title, location, room..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-3 py-1.5 text-xs border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[#FFD93D]"
+                            className="w-full bg-[#050505] border border-[#222222] focus:border-[#303030] text-[#f2f2f2] text-xs pl-8 pr-3 py-1.5 rounded-full focus:outline-none placeholder-[#55585d]"
                         />
                     </div>
 
-                    {/* Filter Pills */}
-                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                        {isStaff && (
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[11px] font-mono font-bold text-gray-500 uppercase flex items-center gap-1">
-                                    <Building2 className="w-3 h-3" /> Hostel:
-                                </span>
-                                {['All', 'Neeladri Hostel', 'Velankani Hostel'].map((h) => (
-                                    <button
-                                        key={h}
-                                        onClick={() => setFilterHostel(h)}
-                                        className={`px-2 py-1 text-xs font-bold rounded border cursor-pointer transition-colors ${
-                                            filterHostel === h
-                                                ? 'bg-[#FFD93D] text-black border-black neo-shadow-sm'
-                                                : 'bg-white text-gray-700 border-gray-300 hover:border-black'
-                                        }`}
-                                    >
-                                        {h === 'All' ? 'All Hostels' : h.replace(' Hostel', '')}
-                                    </button>
-                                ))}
-                            </div>
+                    {/* Filter Selects */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        {/* Hostel Scope (Warden View) */}
+                        {isWarden && (
+                            <select
+                                value={filterHostel}
+                                onChange={(e) => setFilterHostel(e.target.value)}
+                                className="bg-[#050505] border border-[#222222] focus:border-[#303030] text-[#a6a9ad] text-xs px-2.5 py-1.5 rounded-full focus:outline-none"
+                            >
+                                <option value="All">All Hostels</option>
+                                <option value="Neeladri Hostel">Neeladri Hostel</option>
+                                <option value="Velankani Hostel">Velankani Hostel</option>
+                            </select>
                         )}
 
-                        <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-mono font-bold text-gray-500 uppercase flex items-center gap-1">
-                                <Filter className="w-3 h-3" /> Category:
-                            </span>
-                            {['All', 'Plumbing', 'Electrical', 'IT', 'Housekeeping'].map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setFilterCategory(cat)}
-                                    className={`px-2.5 py-1 text-xs font-bold rounded border cursor-pointer transition-colors ${
-                                        filterCategory === cat
-                                            ? 'bg-black text-[#FFD93D] border-black'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-black'
-                                    }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
+                        {/* Category Filter */}
+                        <select
+                            value={filterCategory}
+                            onChange={(e) => setFilterCategory(e.target.value)}
+                            className="bg-[#050505] border border-[#222222] focus:border-[#303030] text-[#a6a9ad] text-xs px-2.5 py-1.5 rounded-full focus:outline-none"
+                        >
+                            <option value="All">All Categories</option>
+                            <option value="Plumbing">Plumbing</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Housekeeping">Housekeeping</option>
+                            <option value="IT">IT & Internet</option>
+                        </select>
+
+                        {/* Priority Filter */}
+                        <select
+                            value={filterPriority}
+                            onChange={(e) => setFilterPriority(e.target.value)}
+                            className="bg-[#050505] border border-[#222222] focus:border-[#303030] text-[#a6a9ad] text-xs px-2.5 py-1.5 rounded-full focus:outline-none"
+                        >
+                            <option value="All">All Priorities</option>
+                            <option value="Critical">Critical</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
                     </div>
                 </div>
 
-                {/* Main Content Area */}
-                {loading && tickets.length === 0 ? (
-                    <div className="py-20 flex flex-col items-center justify-center">
-                        <div className="w-10 h-10 border-4 border-black border-t-[#FFD93D] rounded-full animate-spin mb-3" />
-                        <span className="font-bold text-xs uppercase tracking-wider text-gray-600">
-                            Loading hostel issue stream...
-                        </span>
-                    </div>
-                ) : isStaff && viewMode === 'kanban' ? (
-                    /* Warden & Technician Drag-and-Drop Kanban Board */
+                {/* View Switch: Kanban or Grid */}
+                {viewMode === "kanban" && isStaff ? (
                     <KanbanBoard
                         tickets={filteredTickets}
-                        onStatusChange={handleStatusChange}
+                        onStatusChange={handleStatusUpdate}
+                        isWarden={isWarden}
                     />
                 ) : (
-                    /* Student Grid View or Staff Grid View */
                     <div>
-                        {filteredTickets.length === 0 ? (
-                            <div className="neo-card py-16 px-6 text-center flex flex-col items-center justify-center max-w-lg mx-auto">
-                                <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
-                                <h3 className="text-lg font-black text-black">No Issues Found</h3>
-                                <p className="text-xs text-gray-600 mt-1 mb-4">
-                                    No maintenance tickets match the selected filters.
-                                </p>
-                                {user?.role === 'Student' && (
+                        {/* Status Pills Filter */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-3 border-b border-[#1a1a1a]">
+                            {["All", "Open", "Assigned", "Awaiting-Student-Reply", "Resolved"].map((st) => {
+                                const count = st === "All" ? tickets.length : tickets.filter((t) => t.status === st).length;
+                                const isSelected = filterStatus === st;
+                                const label = st === "Awaiting-Student-Reply" ? "Awaiting Reply" : st;
+
+                                return (
                                     <button
-                                        onClick={() => setIsCreateModalOpen(true)}
-                                        className="neo-btn bg-[#FFD93D] text-black text-xs px-4 py-2 font-black uppercase"
+                                        key={st}
+                                        onClick={() => setFilterStatus(st)}
+                                        className={`px-3 py-1 rounded-full text-xs font-mono flex items-center gap-1.5 transition-colors ${
+                                            isSelected
+                                                ? "bg-[#f2f2f2] text-[#0a0a0a] font-medium"
+                                                : "bg-[#0e0e0e] text-[#717478] hover:text-[#f2f2f2] border border-[#222222]"
+                                        }`}
                                     >
-                                        <PlusCircle className="w-4 h-4" />
-                                        <span>Report New Issue</span>
+                                        <span>{label}</span>
+                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-black/10 text-black font-bold" : "bg-[#141414] text-[#a6a9ad]"}`}>
+                                            {count}
+                                        </span>
                                     </button>
-                                )}
+                                );
+                            })}
+                        </div>
+
+                        {/* Tickets Grid */}
+                        {filteredTickets.length === 0 ? (
+                            <div className="dp-panel p-12 text-center flex flex-col items-center justify-center gap-2">
+                                <Inbox className="w-8 h-8 text-[#55585d]" />
+                                <h3 className="font-medium text-sm text-[#f2f2f2]">No maintenance issues found</h3>
+                                <p className="text-xs text-[#717478]">
+                                    {searchQuery || filterCategory !== "All" || filterPriority !== "All"
+                                        ? "Try adjusting your search criteria or filters."
+                                        : "All campus issues have been addressed."}
+                                </p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                                 {filteredTickets.map((ticket) => (
-                                    <TicketCard
-                                        key={ticket._id}
-                                        ticket={ticket}
-                                        isStaff={isStaff}
-                                    />
+                                    <TicketCard key={ticket._id} ticket={ticket} />
                                 ))}
                             </div>
                         )}
@@ -347,16 +378,13 @@ const Dashboard = () => {
                 )}
             </div>
 
-            {/* Student Create Ticket Modal */}
+            {/* Modals */}
             <CreateTicketModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                onCreated={(newTicket) => {
-                    setTickets((prev) => [newTicket, ...prev]);
-                }}
+                onTicketCreated={(newTicket) => setTickets((prev) => [newTicket, ...prev])}
             />
 
-            {/* Warden Onboard Staff Modal */}
             <AddStaffModal
                 isOpen={isAddStaffOpen}
                 onClose={() => setIsAddStaffOpen(false)}

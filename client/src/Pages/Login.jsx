@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Layers, ArrowRight, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Layers, ArrowRight, AlertTriangle, ShieldCheck } from "lucide-react";
 
 const Login = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const [formData, setFormData] = useState({
-        email: '',
-        password: ''
+        email: "",
+        password: ""
     });
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         setFormData((prev) => ({
@@ -24,89 +24,94 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
-        setError('');
+        setError("");
 
         const res = await login(formData.email, formData.password);
         setSubmitting(false);
 
         if (res.success) {
-            navigate('/dashboard');
+            navigate("/dashboard");
         } else {
-            setError(res.message || 'Login failed. Please check credentials.');
+            setError(res.message || "Login failed. Please check your credentials.");
         }
     };
 
     return (
-        <div className="min-h-screen flex bg-[#FFFDF5] text-black font-sans selection:bg-[#FFD93D] selection:text-black">
-            
-            {/* LEFT PANEL — Brand Showcase */}
+        <div className="min-h-screen flex bg-[#050505] text-[#f2f2f2] font-sans selection:bg-[#3fd6c6] selection:text-[#050505] relative overflow-hidden">
+            {/* Subtle radial light pool */}
             <div
-                className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 border-r-3 border-black bg-[#FFD93D]"
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[450px] pointer-events-none opacity-30"
                 style={{
-                    backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px)`,
-                    backgroundSize: '40px 40px'
+                    background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12) 0%, transparent 60%)"
                 }}
-            >
+            />
+
+            {/* LEFT PANEL — Brand Showcase */}
+            <div className="hidden lg:flex lg:w-[48%] relative flex-col justify-between p-12 border-r border-[#222222] bg-[#090909]">
                 <div>
-                    <Link to="/" className="inline-flex items-center gap-2 group">
-                        <div className="bg-white border-2 border-black p-2 rounded neo-shadow-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform">
-                            <Layers className="w-6 h-6 text-black" />
+                    <Link to="/" className="inline-flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center">
+                            <Layers className="w-4 h-4 text-[#f2f2f2]" />
                         </div>
-                        <span className="font-black text-2xl tracking-tight text-black">
-                            HOSTEL<span className="bg-black text-[#FFD93D] px-1 rounded ml-0.5">FLOW</span>
+                        <span className="font-semibold text-base tracking-tight text-[#f2f2f2]">
+                            HOSTELFLOW
+                        </span>
+                        <span className="text-[11px] font-mono text-[#8a8d91] border-l border-[#222222] pl-2">
+                            Campus Operations
                         </span>
                     </Link>
 
-                    <div className="mt-16 max-w-md">
-                        <div className="inline-block bg-black text-white text-[11px] font-mono font-black uppercase px-2.5 py-1 rounded mb-4">
-                            SLA Enforcement Platform
+                    <div className="mt-20 max-w-md">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#141414] border border-[#222222] text-[10px] font-mono text-[#3fd6c6] mb-4">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6]" />
+                            <span>Campus Resolution Engine</span>
                         </div>
-                        <h2 className="text-3xl sm:text-4xl font-black text-black leading-tight tracking-tight mb-4">
-                            Mission-Critical Campus Issue Resolution.
+                        <h2 className="text-3xl sm:text-4xl font-normal text-[#f2f2f2] leading-tight tracking-tight mb-4">
+                            Guaranteed hostel issue resolution.
                         </h2>
-                        <p className="text-xs sm:text-sm text-black/80 font-medium leading-relaxed mb-6">
-                            Ensuring student complaints never get lost in bureaucratic limbo. Guaranteed resolution deadlines, automated escalations, and real-time technician telemetry.
+                        <p className="text-xs sm:text-sm text-[#a6a9ad] leading-relaxed mb-6 font-normal">
+                            Eliminating delays in student facility maintenance. Automated timeline monitoring, instant staff dispatch, and verified location telemetry.
                         </p>
                     </div>
                 </div>
 
-                {/* Architecture badge */}
-                <div className="bg-white border-2 border-black p-4 rounded-lg neo-shadow-sm text-xs font-mono">
-                    <span className="font-black block uppercase text-black mb-1 flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Security & Architecture</span>
+                {/* Operations badge */}
+                <div className="rounded-[6px] bg-[#0e0e0e] border border-[#222222] p-4 text-xs font-mono">
+                    <span className="text-[#f2f2f2] block mb-1 flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-[#3fd6c6]" />
+                        <span>Verified Role Boundaries</span>
                     </span>
-                    <span className="text-gray-600 block">
-                        HttpOnly SameSite JWT Session Tokens • Role-Based Access Control • WebSockets Ticket Rooms
+                    <span className="text-[#8a8d91] block text-[11px]">
+                        Neeladri &amp; Velankani Hostels • Cryptographic Session Authentication • Instant Coordination
                     </span>
                 </div>
             </div>
 
             {/* RIGHT PANEL — Sign In Form */}
-            <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12">
-                <div className="max-w-md w-full">
+            <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 relative z-10">
+                <div className="max-w-md w-full rounded-[6px] bg-[#0e0e0e] border border-[#222222] p-8 shadow-2xl">
                     
                     {/* Header */}
                     <div className="mb-6">
                         <Link to="/" className="lg:hidden inline-flex items-center gap-2 mb-4">
-                            <div className="bg-[#FFD93D] border-2 border-black p-1.5 rounded neo-shadow-sm">
-                                <Layers className="w-5 h-5 text-black" />
+                            <div className="w-7 h-7 rounded-[6px] bg-[#141414] border border-[#222222] flex items-center justify-center">
+                                <Layers className="w-3.5 h-3.5 text-[#f2f2f2]" />
                             </div>
-                            <span className="font-black text-xl text-black">
+                            <span className="font-semibold text-sm text-[#f2f2f2]">
                                 HOSTELFLOW
                             </span>
                         </Link>
-                        <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+                        <h1 className="text-2xl font-normal text-[#f2f2f2] tracking-tight">
                             Sign In to Portal
                         </h1>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-[#8a8d91] mt-1">
                             Enter your registered student or staff account credentials.
                         </p>
                     </div>
 
                     {error && (
-                        <div className="mb-4 p-3 bg-red-100 border-2 border-red-500 rounded text-xs text-red-800 font-bold flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+                        <div className="mb-4 p-3 bg-[#180a0a] border border-red-800/50 rounded-[6px] text-xs text-red-200/90 flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
                             <span>{error}</span>
                         </div>
                     )}
@@ -114,7 +119,7 @@ const Login = () => {
                     {/* Standard Form */}
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div>
-                            <label className="block text-xs font-bold text-black uppercase mb-1">
+                            <label className="block text-[11px] font-mono text-[#8a8d91] uppercase mb-1.5">
                                 Email Address
                             </label>
                             <input
@@ -124,17 +129,17 @@ const Login = () => {
                                 placeholder="e.g. name.2XBCS1XXXX@sst.scaler.com"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 text-sm border-2 border-black rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD93D]"
+                                className="w-full px-3.5 py-2.5 text-xs border border-[#222222] rounded-[6px] bg-[#080808] text-[#f2f2f2] placeholder-[#8a8d91] focus:outline-none focus:border-[#3fd6c6]"
                             />
                         </div>
 
                         <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="block text-xs font-bold text-black uppercase">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="block text-[11px] font-mono text-[#8a8d91] uppercase">
                                     Password
                                 </label>
-                                <span className="text-[10px] text-gray-500 font-mono">
-                                    Encrypted & Verified
+                                <span className="text-[10px] text-[#8a8d91] font-mono">
+                                    Encrypted &amp; Verified
                                 </span>
                             </div>
                             <input
@@ -144,23 +149,23 @@ const Login = () => {
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 text-sm border-2 border-black rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD93D]"
+                                className="w-full px-3.5 py-2.5 text-xs border border-[#222222] rounded-[6px] bg-[#080808] text-[#f2f2f2] placeholder-[#8a8d91] focus:outline-none focus:border-[#3fd6c6]"
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="neo-btn bg-[#FFD93D] hover:bg-[#ffe066] text-black text-xs py-2.5 font-black uppercase mt-2"
+                            className="w-full py-2.5 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors mt-2 disabled:opacity-50"
                         >
-                            <span>{submitting ? 'Authenticating...' : 'Sign In with HttpOnly Cookie'}</span>
-                            <ArrowRight className="w-4 h-4" />
+                            <span>{submitting ? "Authenticating..." : "Sign In to Operations"}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                     </form>
 
-                    <div className="mt-6 pt-4 border-t-2 border-black/10 text-center text-xs text-gray-600">
-                        Don't have a student account?{' '}
-                        <Link to="/signup" className="font-extrabold text-black underline hover:text-[#FF5252]">
+                    <div className="mt-6 pt-4 border-t border-[#1f1f1f] text-center text-xs text-[#8a8d91]">
+                        Don&apos;t have a student account?{" "}
+                        <Link to="/signup" className="text-[#f2f2f2] hover:underline font-medium">
                             Register New Student
                         </Link>
                     </div>

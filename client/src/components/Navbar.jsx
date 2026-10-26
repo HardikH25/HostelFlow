@@ -1,161 +1,159 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useSocket } from '../context/SocketContext';
-import { axiosInstance } from '../axiosCalls/axios';
-import AddStaffModal from './AddStaffModal';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
+import { axiosInstance } from "../axiosCalls/axios";
+import AddStaffModal from "./AddStaffModal";
 import {
-    ShieldAlert,
-    UserCheck,
     LogOut,
     RefreshCw,
-    Activity,
     Layers,
     MapPin,
     UserPlus
-} from 'lucide-react';
+} from "lucide-react";
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const { connected } = useSocket();
     const navigate = useNavigate();
 
-    const [triggeringCron, setTriggeringCron] = useState(false);
-    const [cronMessage, setCronMessage] = useState(null);
+    const [triggeringCheck, setTriggeringCheck] = useState(false);
+    const [checkMessage, setCheckMessage] = useState(null);
     const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
 
     const handleLogout = async () => {
         await logout();
-        navigate('/login');
+        navigate("/login");
     };
 
-    const handleTriggerCron = async () => {
-        setTriggeringCron(true);
-        setCronMessage(null);
+    const handleTriggerCheck = async () => {
+        setTriggeringCheck(true);
+        setCheckMessage(null);
         try {
-            const res = await axiosInstance.post('/sla/trigger-check');
-            setCronMessage(`SLA Cron executed: ${res.data.breachedCount} breached ticket(s) evaluated.`);
-            setTimeout(() => setCronMessage(null), 4000);
-        } catch (err) {
-            setCronMessage('Cron evaluation failed.');
-            setTimeout(() => setCronMessage(null), 3000);
+            const res = await axiosInstance.post("/sla/trigger-check");
+            setCheckMessage(`Resolution audit complete: ${res.data.breachedCount || 0} issue(s) reviewed.`);
+            setTimeout(() => setCheckMessage(null), 3500);
+        } catch {
+            setCheckMessage("Audit check temporarily unavailable.");
+            setTimeout(() => setCheckMessage(null), 3000);
         } finally {
-            setTriggeringCron(false);
+            setTriggeringCheck(false);
         }
     };
 
-    const getRoleBadgeColor = (role) => {
+    const getRoleBadge = (role) => {
         switch (role) {
-            case 'Warden':
-                return 'bg-[#FF5252] text-white';
-            case 'Technician':
-                return 'bg-[#38E54D] text-black';
-            case 'Student':
+            case "Warden":
+                return "border-red-900/60 bg-red-950/30 text-red-300";
+            case "Technician":
+                return "border-emerald-900/60 bg-emerald-950/30 text-emerald-300";
+            case "Student":
             default:
-                return 'bg-[#FFD93D] text-black';
+                return "border-[#303030] bg-[#141414] text-[#a6a9ad]";
         }
     };
 
     return (
         <>
-            <header className="sticky top-0 z-40 bg-white border-b-3 border-black shadow-[0_4px_0_0_#000]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            <header className="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-md border-b border-[#222222]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     
-                    {/* Brand / Logo */}
-                    <div className="flex items-center gap-3">
-                        <Link to="/dashboard" className="flex items-center gap-2 group">
-                            <div className="bg-[#FFD93D] border-2 border-black p-2 rounded neo-shadow-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform">
-                                <Layers className="w-5 h-5 text-black" />
+                    {/* Brand Identity */}
+                    <div className="flex items-center gap-3.5">
+                        <Link to="/dashboard" className="flex items-center gap-2.5 group">
+                            <div className="bg-[#0e0e0e] border border-[#222222] group-hover:border-[#303030] p-1.5 rounded-[6px] transition-colors">
+                                <Layers className="w-4 h-4 text-[#f2f2f2]" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-extrabold text-xl tracking-tight text-black flex items-center gap-1 leading-none">
-                                    HOSTEL<span className="bg-black text-[#FFD93D] px-1 rounded">FLOW</span>
+                                <span className="font-semibold text-sm tracking-tight text-[#f2f2f2] flex items-center gap-1 leading-none">
+                                    HOSTEL<span className="text-[#3fd6c6]">FLOW</span>
                                 </span>
-                                <span className="font-mono text-[10px] text-gray-600 font-bold tracking-widest uppercase">
-                                    SLA-Driven Resolution Hub
+                                <span className="text-[10px] text-[#717478] font-mono tracking-wider uppercase mt-0.5">
+                                    Campus Maintenance
                                 </span>
                             </div>
                         </Link>
 
-                        {/* WebSocket status pill */}
-                        <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-100 border border-black rounded text-[11px] font-mono">
-                            <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                            <span className="text-gray-700 font-bold">{connected ? 'WS LIVE' : 'WS OFFLINE'}</span>
+                        {/* Subtle Live Sync Indicator */}
+                        <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0e0e0e] border border-[#222222] rounded-full text-[11px] font-mono">
+                            <span className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-[#3fd6c6]" : "bg-red-500"}`} />
+                            <span className="text-[#a6a9ad] text-[10px] tracking-wide">
+                                {connected ? "Live Sync" : "Reconnecting"}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Right controls */}
-                    <div className="flex items-center gap-2 sm:gap-4">
+                    {/* Operational Controls */}
+                    <div className="flex items-center gap-2 sm:gap-3">
                         
                         {/* Warden Action: Onboard Staff */}
-                        {user && user.role === 'Warden' && (
+                        {user && user.role === "Warden" && (
                             <button
                                 onClick={() => setIsAddStaffOpen(true)}
                                 title="Onboard new Technician or Assistant Warden"
-                                className="neo-btn bg-[#FF5252] text-white text-xs px-2.5 py-1.5 flex items-center gap-1.5"
+                                className="neo-btn bg-[#0e0e0e] text-[#f2f2f2] border border-[#222222] hover:border-[#303030] hover:bg-[#141414] px-3.5 py-1.5 text-xs rounded-full flex items-center gap-1.5"
                             >
-                                <UserPlus className="w-3.5 h-3.5" />
-                                <span className="font-bold">Onboard Staff</span>
+                                <UserPlus className="w-3.5 h-3.5 text-[#3fd6c6]" />
+                                <span>Onboard Staff</span>
                             </button>
                         )}
 
-                        {/* SLA Cron Manual Trigger (Staff only) */}
-                        {user && user.role === 'Warden' && (
+                        {/* Warden Action: Verify Resolution Deadlines */}
+                        {user && user.role === "Warden" && (
                             <div className="relative">
                                 <button
-                                    onClick={handleTriggerCron}
-                                    disabled={triggeringCron}
-                                    title="Run automated 30-min SLA check now"
-                                    className="neo-btn bg-[#FFD93D] text-black text-xs px-2.5 py-1.5 hidden md:flex items-center gap-1.5"
+                                    onClick={handleTriggerCheck}
+                                    disabled={triggeringCheck}
+                                    title="Audit and verify issue resolution timelines"
+                                    className="neo-btn bg-[#0e0e0e] text-[#f2f2f2] border border-[#222222] hover:border-[#303030] hover:bg-[#141414] px-3 py-1.5 text-xs rounded-full hidden md:flex items-center gap-1.5"
                                 >
-                                    <RefreshCw className={`w-3.5 h-3.5 ${triggeringCron ? 'animate-spin' : ''}`} />
-                                    <span className="font-bold">Run SLA Cron</span>
+                                    <RefreshCw className={`w-3 h-3 text-[#a6a9ad] ${triggeringCheck ? "animate-spin" : ""}`} />
+                                    <span>Verify Deadlines</span>
                                 </button>
-                                {cronMessage && (
-                                    <div className="absolute right-0 top-10 whitespace-nowrap bg-black text-[#FFD93D] text-[11px] font-mono font-bold px-2 py-1 rounded shadow-lg border border-[#FFD93D] z-50">
-                                        {cronMessage}
+                                {checkMessage && (
+                                    <div className="absolute right-0 top-9 whitespace-nowrap bg-[#0e0e0e] text-[#f2f2f2] text-[11px] font-mono px-3 py-1.5 rounded border border-[#222222] shadow-xl z-50">
+                                        {checkMessage}
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* User profile capsule */}
+                        {/* User Profile Capsule */}
                         {user && (
                             <Link
                                 to="/profile"
-                                title="Account Profile & Settings (Click to manage)"
-                                className="flex items-center gap-2 border-2 border-black bg-white hover:bg-[#FFFDF5] px-2.5 py-1 rounded neo-shadow-sm transition-all hover:translate-x-0.5 hover:translate-y-0.5 cursor-pointer group"
+                                title="Account Settings & Profile"
+                                className="flex items-center gap-2.5 border border-[#222222] bg-[#0e0e0e] hover:border-[#303030] hover:bg-[#121212] px-3 py-1 rounded-full transition-colors group cursor-pointer"
                             >
                                 <div className="flex flex-col text-right">
-                                    <span className="font-extrabold text-xs text-black leading-tight truncate max-w-[140px] group-hover:underline">
+                                    <span className="font-medium text-xs text-[#f2f2f2] leading-tight truncate max-w-[130px]">
                                         {user.fullname}
                                     </span>
-                                    <div className="flex items-center justify-end gap-1 text-[10px] text-gray-500 truncate max-w-[140px]">
-                                        <MapPin className="w-2.5 h-2.5 text-gray-400" />
+                                    <div className="flex items-center justify-end gap-1 text-[10px] text-[#717478] truncate max-w-[130px]">
+                                        <MapPin className="w-2.5 h-2.5 text-[#55585d]" />
                                         <span>{user.location}</span>
                                     </div>
                                 </div>
-                                <span className={`text-[10px] font-mono font-black uppercase px-2 py-0.5 border border-black rounded ${getRoleBadgeColor(user.role)}`}>
+                                <span className={`text-[10px] font-mono font-medium px-2 py-0.5 border rounded-full ${getRoleBadge(user.role)}`}>
                                     {user.role}
                                 </span>
                             </Link>
                         )}
 
-                        {/* Logout */}
+                        {/* Sign Out */}
                         {user && (
                             <button
                                 onClick={handleLogout}
-                                title="Sign out of account"
-                                className="neo-btn bg-white hover:bg-rose-50 text-black p-2"
+                                title="Sign out"
+                                className="neo-btn bg-[#0e0e0e] text-[#717478] hover:text-[#f2f2f2] border border-[#222222] hover:border-[#303030] p-1.5 rounded-full"
                             >
-                                <LogOut className="w-4 h-4 text-rose-600" />
+                                <LogOut className="w-3.5 h-3.5" />
                             </button>
                         )}
                     </div>
                 </div>
             </header>
 
-            {/* Warden Staff Provisioning Modal */}
             <AddStaffModal
                 isOpen={isAddStaffOpen}
                 onClose={() => setIsAddStaffOpen(false)}

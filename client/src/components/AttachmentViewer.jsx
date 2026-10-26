@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { FileText, Image as ImageIcon, ExternalLink, Download, X, Eye } from 'lucide-react';
+import { useState } from "react";
+import { FileText, ExternalLink, Download, X, Eye } from "lucide-react";
 
 const isImage = (file) => {
     if (!file) return false;
-    const type = file.fileType || '';
-    const filename = file.filename || file.url || '';
-    return type.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif)$/i.test(filename);
+    const type = file.fileType || "";
+    const filename = file.filename || file.url || "";
+    return type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(filename);
 };
 
 const formatFileSize = (bytes) => {
-    if (!bytes || bytes === 0) return '';
+    if (!bytes || bytes === 0) return "";
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -22,7 +22,7 @@ const AttachmentViewer = ({ attachments = [], compact = false }) => {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className={`grid ${compact ? 'grid-cols-1 sm:grid-cols-2 gap-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'}`}>
+            <div className={`grid ${compact ? "grid-cols-1 sm:grid-cols-2 gap-2" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"}`}>
                 {attachments.map((att, idx) => {
                     const imageFile = isImage(att);
 
@@ -30,33 +30,33 @@ const AttachmentViewer = ({ attachments = [], compact = false }) => {
                         return (
                             <div
                                 key={idx}
-                                className="group relative border-2 border-black rounded-lg overflow-hidden bg-white neo-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-transform"
+                                className="group relative border border-[#222222] rounded-[6px] overflow-hidden bg-[#0e0e0e] hover:border-[#303030] transition-colors"
                             >
                                 <div
                                     onClick={() => setSelectedImage(att)}
-                                    className="cursor-pointer relative aspect-video bg-gray-100 flex items-center justify-center overflow-hidden"
+                                    className="cursor-pointer relative aspect-video bg-[#050505] flex items-center justify-center overflow-hidden"
                                 >
                                     <img
                                         src={att.url}
-                                        alt={att.filename || 'Attachment'}
+                                        alt={att.filename || "Attachment"}
                                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                                         onError={(e) => {
                                             e.target.onerror = null;
-                                            e.target.src = 'https://placehold.co/400x250/FFD93D/000000?text=Image+Attachment';
+                                            e.target.src = "https://placehold.co/400x250/141414/f2f2f2?text=Image+Attachment";
                                         }}
                                     />
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                        <span className="p-1.5 bg-white text-black border border-black rounded shadow">
-                                            <Eye className="w-4 h-4" />
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                        <span className="p-1.5 bg-[#141414] text-[#f2f2f2] border border-[#222222] rounded-full">
+                                            <Eye className="w-3.5 h-3.5" />
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="p-2 bg-white border-t-2 border-black flex items-center justify-between gap-1 text-[11px]">
-                                    <span className="font-bold text-black truncate" title={att.filename}>
+                                <div className="p-2 bg-[#0a0a0a] border-t border-[#222222] flex items-center justify-between gap-1 text-[11px]">
+                                    <span className="font-mono text-[#f2f2f2] truncate" title={att.filename}>
                                         {att.filename}
                                     </span>
-                                    <span className="text-[10px] font-mono text-gray-500 shrink-0">
+                                    <span className="text-[10px] font-mono text-[#8a8d91] shrink-0">
                                         {formatFileSize(att.size)}
                                     </span>
                                 </div>
@@ -71,21 +71,21 @@ const AttachmentViewer = ({ attachments = [], compact = false }) => {
                             href={att.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2.5 p-2.5 border-2 border-black rounded-lg bg-white neo-shadow-sm hover:bg-red-50 hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-xs group"
+                            className="flex items-center gap-2.5 p-2.5 border border-[#222222] rounded-[6px] bg-[#0e0e0e] hover:border-[#303030] hover:bg-[#141414] transition-all text-xs group"
                         >
-                            <div className="p-2 bg-red-100 text-red-600 border border-black rounded shrink-0">
-                                <FileText className="w-5 h-5" />
+                            <div className="p-2 bg-[#1a0f0f] text-rose-400 border border-rose-900/40 rounded-[4px] shrink-0">
+                                <FileText className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <span className="font-extrabold text-black block truncate group-hover:text-red-700">
+                                <span className="font-medium text-[#f2f2f2] block truncate group-hover:text-white">
                                     {att.filename}
                                 </span>
-                                <span className="text-[10px] font-mono text-gray-500 uppercase flex items-center gap-1">
-                                    <span>PDF Document</span>
+                                <span className="text-[10px] font-mono text-[#8a8d91] uppercase flex items-center gap-1">
+                                    <span>PDF</span>
                                     {att.size ? <span>• {formatFileSize(att.size)}</span> : null}
                                 </span>
                             </div>
-                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-black shrink-0" />
+                            <ExternalLink className="w-3.5 h-3.5 text-[#8a8d91] group-hover:text-[#f2f2f2] shrink-0" />
                         </a>
                     );
                 })}
@@ -95,14 +95,14 @@ const AttachmentViewer = ({ attachments = [], compact = false }) => {
             {selectedImage && (
                 <div
                     onClick={() => setSelectedImage(null)}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="relative max-w-3xl w-full bg-white border-3 border-black rounded-xl p-4 neo-shadow-lg"
+                        className="relative max-w-3xl w-full bg-[#0e0e0e] border border-[#222222] rounded-[6px] p-4 shadow-2xl"
                     >
-                        <div className="flex items-center justify-between pb-2 mb-2 border-b-2 border-black">
-                            <span className="font-bold text-xs truncate max-w-md">
+                        <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#222222]">
+                            <span className="font-mono text-xs text-[#f2f2f2] truncate max-w-md">
                                 {selectedImage.filename}
                             </span>
                             <div className="flex items-center gap-2">
@@ -111,20 +111,20 @@ const AttachmentViewer = ({ attachments = [], compact = false }) => {
                                     download={selectedImage.filename}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="neo-btn bg-white hover:bg-gray-100 text-xs px-2.5 py-1"
+                                    className="px-3 py-1 rounded-full bg-[#141414] border border-[#222222] hover:border-[#303030] text-[#f2f2f2] text-xs font-medium flex items-center gap-1.5"
                                 >
                                     <Download className="w-3.5 h-3.5" />
                                     <span>Download</span>
                                 </a>
                                 <button
                                     onClick={() => setSelectedImage(null)}
-                                    className="p-1 border-2 border-black rounded hover:bg-gray-100 cursor-pointer"
+                                    className="p-1.5 rounded-full hover:bg-[#1a1a1a] text-[#8a8d91] hover:text-[#f2f2f2] cursor-pointer"
                                 >
-                                    <X className="w-4 h-4 text-black" />
+                                    <X className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
-                        <div className="max-h-[75vh] flex items-center justify-center overflow-auto rounded bg-gray-50 border border-dashed border-gray-300">
+                        <div className="max-h-[75vh] flex items-center justify-center overflow-auto rounded-[6px] bg-[#050505] border border-[#1f1f1f]">
                             <img
                                 src={selectedImage.url}
                                 alt={selectedImage.filename}

@@ -1,128 +1,123 @@
 @import "tailwindcss";
 
-@theme {
-  --color-neo-bg: #FFFDF5;
-  --color-neo-card: #FFFFFF;
-  --color-neo-ink: #0A0A0A;
-  --color-neo-primary: #FFD93D;
-  --color-neo-accent: #FF5252;
-  --color-neo-cyan: #38E54D;
-  --color-neo-sky: #60A5FA;
-  --color-neo-purple: #C084FC;
-  --color-neo-amber: #FBBF24;
-  --color-neo-muted: #E2E8F0;
+:root {
+  --dp-color-ground: #050505;
+  --dp-color-panel: #0e0e0e;
+  --dp-color-panel-hover: #141414;
+  --dp-color-hairline: #222222;
+  --dp-color-hairline-2: #303030;
+  --dp-color-bright: #f2f2f2;
+  --dp-color-read: #a6a9ad;
+  --dp-color-meta: #8a8d91;
+  --dp-color-dim: #717478;
+  --dp-color-live: #3fd6c6;
+  --dp-color-inverse-ink: #0a0a0a;
   
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: "Geist", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", Menlo, monospace;
 }
 
 @layer base {
   body {
-    background-color: var(--color-neo-bg);
-    color: var(--color-neo-ink);
+    background-color: var(--dp-color-ground);
+    color: var(--dp-color-bright);
     font-family: var(--font-sans);
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    color: var(--dp-color-bright);
+    letter-spacing: -0.025em;
+  }
+
+  input, select, textarea {
+    background-color: #0e0e0e;
+    color: #f2f2f2;
+    border-color: #222222;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #55585d;
   }
 }
 
-/* Custom Neo-Brutalist Utilities */
-@utility neo-shadow-sm {
-  box-shadow: 2px 2px 0px 0px #000;
+/* Modern Dark Panels & Containers */
+.dp-panel, .neo-card {
+  background-color: #0e0e0e;
+  border: 1px solid #222222;
+  border-radius: 6px;
+  color: #f2f2f2;
+  box-shadow: none;
 }
 
-@utility neo-shadow-md {
-  box-shadow: 4px 4px 0px 0px #000;
+.dp-panel-hover:hover {
+  border-color: #303030;
+  background-color: #121212;
 }
 
-@utility neo-shadow-lg {
-  box-shadow: 8px 8px 0px 0px #000;
-}
-
-@utility neo-shadow-danger {
-  box-shadow: 4px 4px 0px 0px #FF5252;
-}
-
-@utility neo-card {
-  background-color: #FFFFFF;
-  border: 2px solid #000;
-  box-shadow: 4px 4px 0px 0px #000;
-  border-radius: 8px;
-}
-
-@utility neo-btn {
-  border: 2px solid #000;
-  font-weight: 700;
+/* Modern Dark Pill Buttons */
+.neo-btn, .dp-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 3px 3px 0px 0px #000;
-  transition: all 0.12s ease-in-out;
+  gap: 0.4rem;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  transition: all 120ms ease-out;
   cursor: pointer;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  box-shadow: none;
 }
 
-.neo-btn:hover:not(:disabled) {
-  transform: translate(1.5px, 1.5px);
-  box-shadow: 1.5px 1.5px 0px 0px #000;
+.neo-btn:hover:not(:disabled), .dp-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
-.neo-btn:active:not(:disabled) {
-  transform: translate(3px, 3px);
-  box-shadow: 0px 0px 0px 0px #000;
-}
-
-.neo-btn:disabled {
-  opacity: 0.55;
+.neo-btn:disabled, .dp-btn:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Pulsing alert for SLA Breached items */
-@keyframes slaBreachPulse {
+/* Dark Shadows & Hairlines */
+.neo-shadow-sm, .neo-shadow-md, .neo-shadow-lg {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Pulsing alert for overdue / critical items */
+@keyframes overduePulse {
   0%, 100% {
-    border-color: #FF5252;
-    box-shadow: 4px 4px 0px 0px #FF5252, 0 0 12px rgba(255, 82, 82, 0.4);
+    border-color: rgba(239, 68, 68, 0.6);
   }
   50% {
-    border-color: #000000;
-    box-shadow: 4px 4px 0px 0px #000000;
+    border-color: rgba(239, 68, 68, 0.2);
   }
 }
 
 .animate-breach-pulse {
-  animation: slaBreachPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: overduePulse 2.5s ease-in-out infinite;
 }
 
-/* Diagonal stripe pattern for internal staff notes */
-.staff-note-stripe {
-  background-color: #FEF3C7;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(245, 158, 11, 0.12),
-    rgba(245, 158, 11, 0.12) 10px,
-    transparent 10px,
-    transparent 20px
-  );
+/* Subtle radial light pool behind heroes & key panels */
+.radial-light-pool {
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
 }
 
-/* Custom Scrollbar */
+/* Dark Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
-  border-left: 1px solid #CBD5E1;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #000000;
-  border-radius: 4px;
+  background: #222222;
+  border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #333333;
 }

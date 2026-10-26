@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useSocket } from '../context/SocketContext';
-import { axiosInstance } from '../axiosCalls/axios';
-import SLACountdown from '../components/SLACountdown';
-import AttachmentViewer from '../components/AttachmentViewer';
-import confetti from 'canvas-confetti';
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
+import { axiosInstance } from "../axiosCalls/axios";
+import SLACountdown from "../components/SLACountdown";
+import AttachmentViewer from "../components/AttachmentViewer";
+import confetti from "canvas-confetti";
 import {
     ArrowLeft,
     Send,
@@ -27,7 +27,7 @@ import {
     FileText,
     Loader2,
     X
-} from 'lucide-react';
+} from "lucide-react";
 
 const TicketDetails = () => {
     const { id: ticketId } = useParams();
@@ -42,7 +42,7 @@ const TicketDetails = () => {
     const [error, setError] = useState(null);
 
     // Comment input state
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState("");
     const [isInternal, setIsInternal] = useState(false);
     const [submittingComment, setSubmittingComment] = useState(false);
     const [commentAttachments, setCommentAttachments] = useState([]);
@@ -55,13 +55,13 @@ const TicketDetails = () => {
     const [updatingDeadline, setUpdatingDeadline] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
     const [selectedPreset, setSelectedPreset] = useState(null);
-    const [customHours, setCustomHours] = useState('');
-    const [customDate, setCustomDate] = useState('');
+    const [customHours, setCustomHours] = useState("");
+    const [customDate, setCustomDate] = useState("");
     const [showCustomDate, setShowCustomDate] = useState(false);
 
     const chatEndRef = useRef(null);
 
-    const isStaff = user?.role === 'Warden' || user?.role === 'Technician';
+    const isStaff = user?.role === "Warden" || user?.role === "Technician";
 
     // Fetch ticket details and comment thread
     useEffect(() => {
@@ -80,16 +80,15 @@ const TicketDetails = () => {
                     setComments(commentsRes.data.comments || []);
                 }
 
-                // If staff, load technicians
-                if (user?.role === 'Warden') {
-                    const staffRes = await axiosInstance.get('/users/staff');
+                if (user?.role === "Warden") {
+                    const staffRes = await axiosInstance.get("/users/staff");
                     if (isMounted) {
                         setStaffList(staffRes.data.staff || []);
                     }
                 }
             } catch (err) {
                 if (isMounted) {
-                    setError(err.response?.data?.message || 'Failed to load ticket details.');
+                    setError(err.response?.data?.message || "Failed to load ticket details.");
                 }
             } finally {
                 if (isMounted) setLoading(false);
@@ -113,7 +112,6 @@ const TicketDetails = () => {
 
         const handleNewComment = (newComment) => {
             setComments((prev) => {
-                // Avoid duplicate if socket receives own emitted comment
                 if (prev.some((c) => c._id === newComment._id)) return prev;
                 return [...prev, newComment];
             });
@@ -125,19 +123,19 @@ const TicketDetails = () => {
             }
         };
 
-        socket.on('comment:new', handleNewComment);
-        socket.on('ticket:updated', handleTicketUpdated);
+        socket.on("comment:new", handleNewComment);
+        socket.on("ticket:updated", handleTicketUpdated);
 
         return () => {
             leaveTicketRoom(ticketId);
-            socket.off('comment:new', handleNewComment);
-            socket.off('ticket:updated', handleTicketUpdated);
+            socket.off("comment:new", handleNewComment);
+            socket.off("ticket:updated", handleTicketUpdated);
         };
     }, [socket, ticketId, joinTicketRoom, leaveTicketRoom]);
 
     // Auto-scroll chat to bottom
     useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [comments]);
 
     // Handle attaching file to comment
@@ -146,47 +144,47 @@ const TicketDetails = () => {
         if (!file) return;
 
         const formData = new FormData();
-        formData.append('files', file);
+        formData.append("files", file);
 
         setUploadingAttachment(true);
         try {
-            const res = await axiosInstance.post('/upload', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const res = await axiosInstance.post("/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
             if (res.data?.success && res.data.files?.length > 0) {
                 setCommentAttachments((prev) => [...prev, ...res.data.files]);
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to attach document/image.');
+            alert(err.response?.data?.message || "Failed to attach document/image.");
         } finally {
             setUploadingAttachment(false);
-            if (commentFileInputRef.current) commentFileInputRef.current.value = '';
+            if (commentFileInputRef.current) commentFileInputRef.current.value = "";
         }
     };
 
     // Post a comment
     const handleSendComment = async (e) => {
         e.preventDefault();
-        const hasText = message.trim() !== '';
+        const hasText = message.trim() !== "";
         const hasFiles = commentAttachments.length > 0;
         if (!hasText && !hasFiles) return;
 
         setSubmittingComment(true);
         try {
             const res = await axiosInstance.post(`/tickets/${ticketId}/comments`, {
-                message: hasText ? message.trim() : (hasFiles ? '📎 Attached document/image' : ''),
+                message: hasText ? message.trim() : (hasFiles ? "📎 Attached document/image" : ""),
                 isInternal: isStaff ? isInternal : false,
                 attachments: commentAttachments
             });
 
             if (res.data?.success) {
-                setMessage('');
+                setMessage("");
                 setIsInternal(false);
                 setCommentAttachments([]);
             }
         } catch (err) {
-            console.error('Failed to post comment:', err);
-            alert(err.response?.data?.message || 'Failed to post message. Please check your connection and try again.');
+            console.error("Failed to post comment:", err);
+            alert(err.response?.data?.message || "Failed to post message. Please check your connection and try again.");
         } finally {
             setSubmittingComment(false);
         }
@@ -199,14 +197,14 @@ const TicketDetails = () => {
             const res = await axiosInstance.put(`/tickets/${ticketId}/status`, { status: newStatus });
             if (res.data?.success) {
                 setTicket(res.data.ticket);
-                if (newStatus === 'Resolved') {
+                if (newStatus === "Resolved") {
                     try {
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
                     } catch (e) {}
                 }
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Error updating status');
+            alert(err.response?.data?.message || "Error updating status");
         } finally {
             setStatusUpdating(false);
         }
@@ -222,35 +220,34 @@ const TicketDetails = () => {
                 setTicket(res.data.ticket);
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Error assigning staff');
+            alert(err.response?.data?.message || "Error assigning staff");
         } finally {
             setAssigning(false);
         }
     };
 
-    // SLA deadline adjustment
+    // Deadline adjustment
     const handleSetDeadline = async ({ hours, date }) => {
         setUpdatingDeadline(true);
-        setActiveButton(hours !== undefined ? hours : 'custom');
+        setActiveButton(hours !== undefined ? hours : "custom");
         try {
             const payload = hours !== undefined ? { deadlineHours: hours } : { customDeadline: date };
             const res = await axiosInstance.put(`/tickets/${ticketId}/deadline`, payload);
             if (res.data?.success) {
                 setTicket(res.data.ticket);
-                setSelectedPreset(hours !== undefined ? hours : 'custom');
-                setCustomHours('');
-                setCustomDate('');
+                setSelectedPreset(hours !== undefined ? hours : "custom");
+                setCustomHours("");
+                setCustomDate("");
                 setShowCustomDate(false);
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to update SLA deadline');
+            alert(err.response?.data?.message || "Failed to update resolution deadline");
         } finally {
             setUpdatingDeadline(false);
             setActiveButton(null);
         }
     };
 
-    // Calculate active preset for visual selection
     const activePreset = (() => {
         if (selectedPreset !== null) return selectedPreset;
         if (!ticket?.slaDeadline) return null;
@@ -258,11 +255,9 @@ const TicketDetails = () => {
         const deadline = new Date(ticket.slaDeadline).getTime();
         const created = ticket.createdAt ? new Date(ticket.createdAt).getTime() : now;
         
-        // Check window from creation (e.g. initial priority SLA)
         const totalWindowHours = Math.round((deadline - created) / (3600 * 1000));
         if ([4, 12, 24, 48].includes(totalWindowHours)) return totalWindowHours;
 
-        // Check remaining hours from now
         const remainingHours = Math.round((deadline - now) / (3600 * 1000));
         if ([4, 12, 24, 48].includes(remainingHours)) return remainingHours;
 
@@ -271,10 +266,10 @@ const TicketDetails = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#FFFDF5] flex items-center justify-center">
-                <div className="neo-card p-8 flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-black border-t-[#FFD93D] rounded-full animate-spin" />
-                    <span className="font-bold text-sm tracking-wider uppercase">Loading Ticket Console...</span>
+            <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+                <div className="p-8 rounded-[6px] bg-[#0e0e0e] border border-[#222222] flex flex-col items-center gap-3">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#3fd6c6]" />
+                    <span className="font-mono text-xs text-[#8a8d91] tracking-wider uppercase">Loading Ticket Console...</span>
                 </div>
             </div>
         );
@@ -282,14 +277,14 @@ const TicketDetails = () => {
 
     if (error || !ticket) {
         return (
-            <div className="min-h-screen bg-[#FFFDF5] p-6 flex flex-col items-center justify-center">
-                <div className="neo-card max-w-md p-6 text-center">
-                    <AlertTriangle className="w-10 h-10 text-rose-500 mx-auto mb-2" />
-                    <h2 className="text-lg font-black text-black">Unable to Access Ticket</h2>
-                    <p className="text-xs text-gray-600 my-2">{error || 'Ticket not found or permission denied.'}</p>
+            <div className="min-h-screen bg-[#050505] p-6 flex flex-col items-center justify-center">
+                <div className="max-w-md p-6 rounded-[6px] bg-[#0e0e0e] border border-[#222222] text-center">
+                    <AlertTriangle className="w-8 h-8 text-rose-400 mx-auto mb-2" />
+                    <h2 className="text-base font-medium text-[#f2f2f2]">Unable to Access Ticket</h2>
+                    <p className="text-xs text-[#a6a9ad] my-2">{error || "Ticket not found or permission denied."}</p>
                     <button
-                        onClick={() => navigate('/dashboard')}
-                        className="neo-btn bg-[#FFD93D] text-black text-xs px-4 py-2 mt-2"
+                        onClick={() => navigate("/dashboard")}
+                        className="px-4 py-2 mt-2 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium"
                     >
                         Return to Dashboard
                     </button>
@@ -298,365 +293,343 @@ const TicketDetails = () => {
         );
     }
 
-    const isBreached = ticket.slaBreached || (ticket.status !== 'Resolved' && ticket.status !== 'Awaiting-Student-Reply' && new Date() > new Date(ticket.slaDeadline));
+    const isBreached = ticket.slaBreached || (ticket.status !== "Resolved" && ticket.status !== "Awaiting-Student-Reply" && new Date() > new Date(ticket.slaDeadline));
 
     return (
-        <div className="min-h-[calc(100vh-4.5rem)] bg-[#FFFDF5] p-4 sm:p-6 lg:p-8">
-            {/* Top Navigation */}
-            <div className="max-w-7xl mx-auto mb-5 flex items-center justify-between">
+        <div className="min-h-[calc(100vh-4rem)] bg-[#050505] p-4 sm:p-6 lg:p-8 text-[#f2f2f2] font-sans">
+            {/* Top Navigation Bar */}
+            <div className="max-w-[1360px] mx-auto mb-6 flex items-center justify-between">
                 <button
-                    onClick={() => navigate('/dashboard')}
-                    className="neo-btn bg-white hover:bg-gray-100 text-black text-xs px-3 py-1.5"
+                    onClick={() => navigate("/dashboard")}
+                    className="px-4 py-2 rounded-full bg-[#0e0e0e] border border-[#222222] hover:border-[#303030] text-[#a6a9ad] hover:text-[#f2f2f2] text-xs font-medium flex items-center gap-2 transition-colors"
                 >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back to Issues</span>
                 </button>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-gray-500 uppercase">Ticket ID:</span>
-                    <span className="font-mono text-xs font-black bg-black text-[#FFD93D] px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono text-[#8a8d91]">Ticket:</span>
+                    <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[#f2f2f2]">
                         #{ticket._id.slice(-6).toUpperCase()}
                     </span>
                 </div>
             </div>
 
-            {/* Split-Screen Container */}
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Split-Screen 12-Column Grid */}
+            <div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                {/* ========================================================
-                    LEFT PANEL: Static Ticket Meta, SLA Countdown & Actions
-                   ======================================================== */}
+                {/* LEFT PANEL: Meta, Resolution Window & Actions */}
                 <div className="lg:col-span-6 xl:col-span-5 flex flex-col gap-5">
                     
                     {/* Main Meta Card */}
-                    <div className={`neo-card p-6 ${isBreached ? 'animate-breach-pulse' : ''}`}>
+                    <div className={`rounded-[6px] bg-[#0e0e0e] border p-6 ${isBreached ? "border-red-800/60 shadow-[0_0_20px_rgba(239,68,68,0.1)]" : "border-[#222222]"}`}>
                         
                         {/* Badges Bar */}
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="inline-flex items-center gap-1 text-xs font-black uppercase px-2.5 py-1 bg-black text-white rounded">
+                        <div className="flex items-center justify-between gap-2 mb-4">
+                            <span className="inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-[#141414] border border-[#222222] text-[#f2f2f2]">
                                 {ticket.category}
                             </span>
                             <SLACountdown ticket={ticket} />
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-xl sm:text-2xl font-black text-black leading-tight mb-3">
+                        <h1 className="text-xl sm:text-2xl font-normal text-[#f2f2f2] leading-tight mb-3 tracking-tight">
                             {ticket.title}
                         </h1>
 
                         {/* Description Box */}
-                        <div className="bg-[#F8FAFC] border-2 border-black rounded-lg p-3.5 mb-4 text-sm text-gray-800 leading-relaxed font-sans">
+                        <div className="bg-[#080808] border border-[#1a1a1a] rounded-[6px] p-4 mb-4 text-xs text-[#a6a9ad] leading-relaxed">
                             {ticket.description}
                         </div>
 
-                        {/* Attachments / Evidence Section */}
+                        {/* Attached Evidence & Documents */}
                         {ticket.attachments && ticket.attachments.length > 0 && (
                             <div className="mb-4">
-                                <span className="font-mono text-xs font-black uppercase text-black mb-2 flex items-center gap-1.5">
-                                    <Paperclip className="w-3.5 h-3.5 text-black" />
-                                    <span>Attached Evidence & Documents ({ticket.attachments.length})</span>
+                                <span className="font-mono text-xs text-[#8a8d91] mb-2 flex items-center gap-1.5">
+                                    <Paperclip className="w-3.5 h-3.5 text-[#8a8d91]" />
+                                    <span>Attached Evidence &amp; Documents ({ticket.attachments.length})</span>
                                 </span>
                                 <AttachmentViewer attachments={ticket.attachments} />
                             </div>
                         )}
 
-                        {/* Student & Location Details */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-[#FFFDF5] border-2 border-dashed border-black rounded-lg text-xs mb-5">
+                        {/* Student Snapshot Info */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-[6px] text-xs mb-4">
                             <div className="flex items-start gap-2">
-                                <User className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+                                <User className="w-4 h-4 text-[#8a8d91] shrink-0 mt-0.5" />
                                 <div>
-                                    <span className="block font-bold text-gray-500 text-[10px] uppercase">Submitted By:</span>
-                                    <span className="font-extrabold text-black">{ticket.studentId?.fullname}</span>
-                                    <span className="block text-gray-500 text-[11px] font-mono">{ticket.studentId?.email}</span>
+                                    <span className="block text-[10px] font-mono text-[#8a8d91] uppercase">Submitted By:</span>
+                                    <span className="font-medium text-[#f2f2f2]">{ticket.studentId?.fullname || "Student Resident"}</span>
+                                    {ticket.studentId?.phone && (
+                                        <span className="block text-[10px] font-mono text-[#8a8d91]">Ph: {ticket.studentId.phone}</span>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+                                <MapPin className="w-4 h-4 text-[#8a8d91] shrink-0 mt-0.5" />
                                 <div>
-                                    <span className="block font-bold text-gray-500 text-[10px] uppercase">Hostel Location:</span>
-                                    <span className="font-bold text-black">{ticket.locationSnapshot || ticket.studentId?.location}</span>
+                                    <span className="block text-[10px] font-mono text-[#8a8d91] uppercase">Hostel Location:</span>
+                                    <span className="font-medium text-[#f2f2f2]">{ticket.locationSnapshot || ticket.studentId?.location}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* SLA Status Notification Banners */}
-                        {ticket.status === 'Awaiting-Student-Reply' && (
-                            <div className="mb-4 p-3 bg-[#FEF3C7] border-2 border-black rounded-lg text-xs text-[#92400E] flex items-center gap-2">
-                                <PauseCircle className="w-5 h-5 text-[#D97706] shrink-0 animate-pulse" />
+                        {/* Resolution Timeline Notifications */}
+                        {ticket.status === "Awaiting-Student-Reply" && (
+                            <div className="mb-4 p-3.5 rounded-[6px] bg-[#161208] border border-amber-800/40 text-xs text-amber-200/90 flex items-center gap-2.5">
+                                <PauseCircle className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
                                 <div>
-                                    <strong className="block uppercase font-black">SLA Clock Paused</strong>
-                                    Resolution timer is frozen while waiting for the student's clarification.
+                                    <strong className="block font-medium">Resolution Timeline Paused</strong>
+                                    Countdown is frozen while waiting for the student&apos;s clarification.
                                 </div>
                             </div>
                         )}
 
                         {isBreached && (
-                            <div className="mb-4 p-3 bg-red-100 border-2 border-red-600 rounded-lg text-xs text-red-900 flex items-center gap-2">
-                                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+                            <div className="mb-4 p-3.5 rounded-[6px] bg-[#180a0a] border border-red-800/50 text-xs text-red-200/90 flex items-center gap-2.5">
+                                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
                                 <div>
-                                    <strong className="block uppercase font-black">SLA Breached</strong>
-                                    Issue unresolved past deadline. Automatically escalated and alerted to Warden.
+                                    <strong className="block font-medium">Target Resolution Window Overdue</strong>
+                                    Issue unresolved past deadline. Automatically escalated for priority review.
                                 </div>
                             </div>
                         )}
 
-                        {/* Warden Action Controls: Status, Assignee, SLA Time */}
+                        {/* Warden Action Controls: Status, Assignee, Window */}
                         {user?.role === "Warden" && (
-                            <div className="pt-4 border-t-2 border-black flex flex-col gap-3">
-                                <span className="font-mono text-xs font-black uppercase text-gray-700 tracking-wider flex items-center justify-between">
-                                    <span>Warden Management Controls</span>
-                                    <span className="text-[10px] font-mono font-bold bg-[#FFD93D] text-black px-1.5 py-0.5 border border-black rounded">
+                            <div className="pt-5 border-t border-[#1f1f1f] flex flex-col gap-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-mono text-[#a6a9ad] uppercase tracking-wider">
+                                        Warden Management Controls
+                                    </span>
+                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[#3fd6c6]">
                                         Admin
                                     </span>
-                                </span>
+                                </div>
 
                                 {/* Status Switcher */}
                                 <div>
-                                    <label className="block text-[11px] font-bold text-black uppercase mb-1">
+                                    <label className="block text-[11px] font-mono text-[#8a8d91] uppercase mb-2">
                                         Update Issue Status
                                     </label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                                        {['Open', 'Assigned', 'Awaiting-Student-Reply', 'Resolved'].map((st) => (
-                                            <button
-                                                key={st}
-                                                type="button"
-                                                disabled={statusUpdating}
-                                                onClick={() => handleStatusChange(st)}
-                                                className={`px-2 py-1.5 text-[11px] font-bold rounded border border-black cursor-pointer transition-colors ${
-                                                    ticket.status === st
-                                                        ? 'bg-black text-[#FFD93D]'
-                                                        : 'bg-white text-gray-800 hover:bg-gray-100'
-                                                }`}
-                                            >
-                                                {st === 'Awaiting-Student-Reply' ? 'Awaiting Reply' : st}
-                                            </button>
-                                        ))}
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        {["Open", "Assigned", "Awaiting-Student-Reply", "Resolved"].map((st) => {
+                                            const isActive = ticket.status === st;
+                                            return (
+                                                <button
+                                                    key={st}
+                                                    type="button"
+                                                    disabled={statusUpdating}
+                                                    onClick={() => handleStatusChange(st)}
+                                                    className={`px-2.5 py-1.5 text-xs rounded-full border transition-all cursor-pointer ${
+                                                        isActive
+                                                            ? "bg-[#f2f2f2] text-[#0a0a0a] border-[#f2f2f2] font-medium"
+                                                            : "bg-[#141414] border-[#222222] text-[#a6a9ad] hover:border-[#303030]"
+                                                    }`}
+                                                >
+                                                    {st === "Awaiting-Student-Reply" ? "Awaiting Reply" : st}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
                                 {/* Assign Technician */}
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
-                                        <label className="block text-[11px] font-bold text-black uppercase">
+                                    <div className="flex items-center justify-between mb-1.5">
+                                        <label className="block text-[11px] font-mono text-[#8a8d91] uppercase">
                                             Assign Technician / Staff
                                         </label>
-                                        <span className="text-[10px] font-mono font-bold bg-[#FFD93D] text-black px-1.5 py-0.5 border border-black rounded">
-                                            {ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel')}
+                                        <span className="text-[10px] font-mono text-[#8a8d91]">
+                                            {ticket.hostel || (ticket.locationSnapshot?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel")}
                                         </span>
                                     </div>
                                     <select
                                         disabled={assigning}
-                                        value={ticket.assignedTo?._id || ticket.assignedTo || ''}
+                                        value={ticket.assignedTo?._id || ticket.assignedTo || ""}
                                         onChange={handleAssignChange}
-                                        className="w-full px-3 py-2 text-xs border-2 border-black rounded bg-white font-medium focus:outline-none"
+                                        className="w-full px-3 py-2 text-xs border border-[#222222] rounded-[6px] bg-[#0a0a0a] text-[#f2f2f2] font-normal focus:outline-none focus:border-[#3fd6c6]"
                                     >
                                         <option value="">-- Unassigned --</option>
                                         {staffList
                                             .filter((member) => {
-                                                const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
-                                                const memberHostel = member.hostel || (member.location?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel');
+                                                const ticketHostel = ticket.hostel || (ticket.locationSnapshot?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel");
+                                                const memberHostel = member.hostel || (member.location?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel");
                                                 return memberHostel === ticketHostel;
                                             })
                                             .map((member) => (
                                                 <option key={member._id} value={member._id}>
-                                                    {member.fullname} ({member.role}{member.role === 'Technician' && member.specialization ? ` • ${member.specialization}` : ''})
+                                                    {member.fullname} ({member.role}{member.role === "Technician" && member.specialization ? ` • ${member.specialization}` : ""})
                                                 </option>
                                             ))}
                                     </select>
-                                    <p className="text-[10px] text-gray-500 font-mono mt-1">
-                                        Hostel Isolation: Only showing staff assigned to {ticket.hostel || (ticket.locationSnapshot?.includes('Velankani') ? 'Velankani Hostel' : 'Neeladri Hostel')}.
+                                    <p className="text-[10px] text-[#8a8d91] font-mono mt-1">
+                                        Hostel Isolation: Filtered to staff in {ticket.hostel || (ticket.locationSnapshot?.includes("Velankani") ? "Velankani Hostel" : "Neeladri Hostel")}.
                                     </p>
                                 </div>
 
-                                {/* Warden SLA Resolution Time Override */}
-                                {user?.role === 'Warden' && (
-                                    <div className="pt-3 border-t-2 border-dashed border-black/20">
-                                        <div className="flex items-center justify-between mb-1.5">
-                                            <label className="block text-[11px] font-bold text-black uppercase flex items-center gap-1.5">
-                                                <Clock className="w-3.5 h-3.5 text-black" />
-                                                <span>Set SLA Resolution Time</span>
-                                            </label>
-                                            <span className="text-[10px] font-mono font-bold bg-black text-[#FFD93D] px-1.5 py-0.5 rounded">
-                                                Warden Control
-                                            </span>
-                                        </div>
-                                        <p className="text-[10px] text-gray-500 font-mono mb-2">
-                                            Select a target resolution window. Live countdown & breach detection reflect instantly.
-                                        </p>
+                                {/* Target Resolution Window Controls */}
+                                <div className="pt-3 border-t border-[#1f1f1f]">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="block text-[11px] font-mono text-[#8a8d91] uppercase flex items-center gap-1.5">
+                                            <Clock className="w-3.5 h-3.5 text-[#3fd6c6]" />
+                                            <span>Target Resolution Window</span>
+                                        </label>
+                                        <span className="text-[10px] font-mono text-[#8a8d91]">
+                                            Warden Controlled
+                                        </span>
+                                    </div>
 
-                                        {/* Quick Presets with Active State Indicator */}
-                                        <div className="grid grid-cols-4 gap-1.5 mb-2">
-                                            {[4, 12, 24, 48].map((h) => {
-                                                const isSelected = activePreset === h;
-                                                const isLoadingThis = updatingDeadline && activeButton === h;
+                                    {/* Presets */}
+                                    <div className="grid grid-cols-4 gap-2 mb-2">
+                                        {[4, 12, 24, 48].map((hrs) => {
+                                            const isSelected = activePreset === hrs;
+                                            return (
+                                                <button
+                                                    key={hrs}
+                                                    type="button"
+                                                    disabled={updatingDeadline}
+                                                    onClick={() => handleSetDeadline({ hours: hrs })}
+                                                    className={`py-1.5 text-xs rounded-full border transition-all cursor-pointer font-mono ${
+                                                        isSelected
+                                                            ? "bg-[#f2f2f2] text-[#0a0a0a] border-[#f2f2f2] font-semibold"
+                                                            : "bg-[#141414] border-[#222222] text-[#a6a9ad] hover:border-[#303030]"
+                                                    }`}
+                                                >
+                                                    {updatingDeadline && activeButton === hrs ? (
+                                                        <Loader2 className="w-3 h-3 animate-spin mx-auto text-[#0a0a0a]" />
+                                                    ) : (
+                                                        `+${hrs}h`
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
 
-                                                return (
-                                                    <button
-                                                        key={h}
-                                                        type="button"
-                                                        disabled={updatingDeadline}
-                                                        onClick={() => handleSetDeadline({ hours: h })}
-                                                        className={`py-1.5 px-2 text-[11px] font-bold rounded border-2 border-black text-center cursor-pointer transition-all flex items-center justify-center gap-1 ${
-                                                            isSelected
-                                                                ? 'bg-black text-[#FFD93D] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                                                                : 'bg-white text-gray-800 hover:bg-gray-100 hover:border-black active:translate-y-0.5'
-                                                        }`}
-                                                        title={`Set resolution deadline to ${h} hours from now`}
-                                                    >
-                                                        {isLoadingThis ? (
-                                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#FFD93D]" />
-                                                        ) : isSelected ? (
-                                                            <>
-                                                                <CheckCircle className="w-3.5 h-3.5 text-[#FFD93D]" />
-                                                                <span>{h}h</span>
-                                                            </>
-                                                        ) : (
-                                                            <span>+{h}h</span>
-                                                        )}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {/* Selected Window Confirmation Banner */}
-                                        <div className="flex items-center justify-between p-2 mb-2 bg-[#FFFDF5] border border-black rounded text-[11px] font-mono">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                                <span className="font-extrabold text-black">
-                                                    {activePreset && typeof activePreset === 'number'
-                                                        ? `${activePreset}h Window Selected`
-                                                        : activePreset === 'custom'
-                                                        ? 'Custom Window Selected'
-                                                        : 'SLA Target Window'}
-                                                </span>
-                                            </div>
-                                            {ticket.slaDeadline && (
-                                                <span className="text-gray-600 font-semibold text-[10px]">
-                                                    Due: {new Date(ticket.slaDeadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })},{' '}
-                                                    {new Date(ticket.slaDeadline).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                                                </span>
+                                    {/* Custom Hours */}
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            min="0.5"
+                                            step="0.5"
+                                            placeholder="Custom hours (e.g. 6)"
+                                            value={customHours}
+                                            onChange={(e) => setCustomHours(e.target.value)}
+                                            className="flex-1 px-3 py-1.5 text-xs border border-[#222222] rounded-full bg-[#0a0a0a] text-[#f2f2f2] placeholder-[#8a8d91] focus:outline-none focus:border-[#3fd6c6]"
+                                        />
+                                        <button
+                                            type="button"
+                                            disabled={updatingDeadline || !customHours}
+                                            onClick={() => handleSetDeadline({ hours: Number(customHours) })}
+                                            className="px-4 py-1.5 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium whitespace-nowrap flex items-center gap-1 transition-colors"
+                                        >
+                                            {updatingDeadline && activeButton === "custom" ? (
+                                                <>
+                                                    <Loader2 className="w-3 h-3 animate-spin text-[#0a0a0a]" />
+                                                    <span>Updating...</span>
+                                                </>
+                                            ) : (
+                                                <span>Set Hours</span>
                                             )}
-                                        </div>
+                                        </button>
+                                    </div>
 
-                                        {/* Custom Hours Input */}
-                                        <div className="flex items-center gap-1.5 mb-1.5">
-                                            <input
-                                                type="number"
-                                                min="0.5"
-                                                step="0.5"
-                                                placeholder="Custom hours (e.g. 6)"
-                                                value={customHours}
-                                                onChange={(e) => setCustomHours(e.target.value)}
-                                                className="flex-1 px-2.5 py-1.5 text-xs border border-black rounded bg-white font-medium focus:outline-none"
-                                            />
+                                    {/* Exact Date/Time Picker */}
+                                    <div className="mt-2">
+                                        {!showCustomDate ? (
                                             <button
                                                 type="button"
-                                                disabled={updatingDeadline || !customHours}
-                                                onClick={() => handleSetDeadline({ hours: Number(customHours) })}
-                                                className="neo-btn bg-black text-[#FFD93D] text-[11px] px-3 py-1.5 font-bold whitespace-nowrap flex items-center gap-1"
+                                                onClick={() => setShowCustomDate(true)}
+                                                className="text-[11px] font-mono text-[#8a8d91] hover:text-[#f2f2f2] cursor-pointer"
                                             >
-                                                {updatingDeadline && activeButton === 'custom' ? (
-                                                    <>
-                                                        <Loader2 className="w-3 h-3 animate-spin text-[#FFD93D]" />
-                                                        <span>Updating...</span>
-                                                    </>
-                                                ) : (
-                                                    <span>Set Hours</span>
-                                                )}
+                                                + Set exact target date &amp; time
                                             </button>
-                                        </div>
-
-                                        {/* Exact Date/Time Picker */}
-                                        <div className="mt-1">
-                                            {!showCustomDate ? (
+                                        ) : (
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={customDate}
+                                                    onChange={(e) => setCustomDate(e.target.value)}
+                                                    className="flex-1 px-3 py-1 text-xs border border-[#222222] rounded-[6px] bg-[#0a0a0a] text-[#f2f2f2] focus:outline-none focus:border-[#3fd6c6]"
+                                                />
                                                 <button
                                                     type="button"
-                                                    onClick={() => setShowCustomDate(true)}
-                                                    className="text-[10px] font-mono text-gray-600 underline hover:text-black cursor-pointer"
+                                                    disabled={updatingDeadline || !customDate}
+                                                    onClick={() => handleSetDeadline({ date: new Date(customDate).toISOString() })}
+                                                    className="px-3 py-1 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium"
                                                 >
-                                                    Or pick exact date & time...
+                                                    Save
                                                 </button>
-                                            ) : (
-                                                <div className="flex items-center gap-1.5 mt-1.5">
-                                                    <input
-                                                        type="datetime-local"
-                                                        value={customDate}
-                                                        onChange={(e) => setCustomDate(e.target.value)}
-                                                        className="flex-1 px-2 py-1 text-xs border border-black rounded bg-white font-medium focus:outline-none"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        disabled={updatingDeadline || !customDate}
-                                                        onClick={() => handleSetDeadline({ date: new Date(customDate).toISOString() })}
-                                                        className="neo-btn bg-black text-[#FFD93D] text-[11px] px-2.5 py-1 font-bold whitespace-nowrap"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowCustomDate(false)}
-                                                        className="text-xs px-2 py-1 text-gray-500 hover:text-black cursor-pointer"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowCustomDate(false)}
+                                                    className="text-xs px-2 py-1 text-[#8a8d91] hover:text-[#f2f2f2] cursor-pointer"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         )}
 
-                        {/* Technician Work Console (Read-only status & assignment info) */}
+                        {/* Technician Work Console (Read-only) */}
                         {user?.role === "Technician" && (
-                            <div className="pt-4 border-t-2 border-black flex flex-col gap-2.5">
-                                <span className="font-mono text-xs font-black uppercase text-gray-700 tracking-wider flex items-center justify-between">
-                                    <span className="flex items-center gap-1.5">
-                                        <Wrench className="w-3.5 h-3.5 text-black" />
+                            <div className="pt-5 border-t border-[#1f1f1f] flex flex-col gap-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-mono text-[#a6a9ad] uppercase tracking-wider flex items-center gap-1.5">
+                                        <Wrench className="w-3.5 h-3.5 text-[#3fd6c6]" />
                                         <span>Technician Work Console</span>
                                     </span>
-                                    <span className="text-[10px] font-mono font-bold bg-[#38E54D] text-black px-2 py-0.5 border border-black rounded">
+                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[#3fd6c6]">
                                         Assigned to You
                                     </span>
-                                </span>
-                                <div className="p-3 bg-white border-2 border-black rounded-lg text-xs flex flex-col gap-2 neo-shadow-sm">
+                                </div>
+                                <div className="p-3.5 rounded-[6px] bg-[#0a0a0a] border border-[#1f1f1f] text-xs flex flex-col gap-2">
                                     <div className="flex items-center justify-between font-mono">
-                                        <span className="text-gray-500 font-bold uppercase text-[10px]">Current Status:</span>
-                                        <span className="font-black text-black bg-black text-[#FFD93D] px-2 py-0.5 rounded text-[11px]">
+                                        <span className="text-[#8a8d91] text-[10px] uppercase">Current Status:</span>
+                                        <span className="px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[#f2f2f2] text-[11px]">
                                             {ticket.status}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-gray-500 font-medium">Designated Scope:</span>
-                                        <span className="font-bold text-black">{ticket.category}</span>
+                                        <span className="text-[#8a8d91]">Designated Scope:</span>
+                                        <span className="font-medium text-[#f2f2f2]">{ticket.category}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-gray-500 font-medium">Room Location:</span>
-                                        <span className="font-bold text-black">{ticket.locationSnapshot || ticket.studentId?.location}</span>
+                                        <span className="text-[#8a8d91]">Room Location:</span>
+                                        <span className="font-medium text-[#f2f2f2]">{ticket.locationSnapshot || ticket.studentId?.location}</span>
                                     </div>
-                                    <p className="text-[10px] text-gray-500 font-mono pt-2 border-t border-gray-200">
-                                        Status and assignment updates are managed by the Warden. Post progress notes and questions in the Discussion Thread below.
+                                    <p className="text-[10px] text-[#8a8d91] font-mono pt-2 border-t border-[#1f1f1f]">
+                                        Status and assignments are managed by the Warden. Post progress notes and questions in the Discussion Thread.
                                     </p>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Escalation History Log (if any escalations happened) */}
+                    {/* Resolution Audit & Escalation Log */}
                     {ticket.escalationHistory && ticket.escalationHistory.length > 0 && (
-                        <div className="neo-card p-4 bg-[#FFF8E7]">
-                            <h4 className="font-mono text-xs font-black uppercase text-black mb-2 flex items-center gap-1.5">
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                                <span>SLA Escalation Audit Log</span>
+                        <div className="rounded-[6px] bg-[#0e0e0e] border border-[#222222] p-5">
+                            <h4 className="font-mono text-xs text-[#8a8d91] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                                <span>Resolution Audit &amp; Escalation History</span>
                             </h4>
-                            <div className="flex flex-col gap-2">
-                                {ticket.escalationHistory.map((entry, idx) => (
-                                    <div key={idx} className="p-2 bg-white border border-black rounded text-[11px]">
-                                        <div className="flex items-center justify-between font-mono font-bold text-gray-600 mb-0.5">
-                                            <span>{new Date(entry.escalatedAt).toLocaleTimeString()}</span>
-                                            <span className="text-red-600">{entry.oldPriority} → {entry.newPriority}</span>
+                            <div className="space-y-2">
+                                {ticket.escalationHistory.map((item, idx) => (
+                                    <div key={idx} className="p-2.5 rounded-[6px] bg-[#0a0a0a] border border-[#1a1a1a] text-xs flex items-center justify-between">
+                                        <div>
+                                            <span className="font-mono text-[10px] text-[#8a8d91] block">
+                                                {new Date(item.escalatedAt || item.triggeredAt || item.createdAt || Date.now()).toLocaleString()}
+                                            </span>
+                                            <span className="font-medium text-[#f2f2f2]">{item.reason?.replace(/SLA Breach/gi, "Target Overdue")?.replace(/SLA Deadline adjusted/gi, "Resolution window adjusted") || "Priority Escalation"}</span>
                                         </div>
-                                        <p className="text-gray-800 font-medium">{entry.reason}</p>
+                                        <div className="text-right font-mono text-[11px]">
+                                            <span className="text-[#8a8d91]">{item.oldPriority}</span>
+                                            <span className="text-[#8a8d91] mx-1">→</span>
+                                            <span className="text-amber-400 font-semibold">{item.newPriority}</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -664,41 +637,31 @@ const TicketDetails = () => {
                     )}
                 </div>
 
-                {/* ========================================================
-                    RIGHT PANEL: Real-Time WebSocket Comment Engine
-                   ======================================================== */}
+                {/* RIGHT PANEL: Live Discussion Thread */}
                 <div className="lg:col-span-6 xl:col-span-7">
-                    <div className="neo-card flex flex-col h-[700px] overflow-hidden">
+                    <div className="rounded-[6px] bg-[#0e0e0e] border border-[#222222] p-5 flex flex-col h-[740px]">
                         
-                        {/* Chat Header */}
-                        <div className="p-4 bg-white border-b-2 border-black flex items-center justify-between">
+                        {/* Discussion Header */}
+                        <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#222222]">
                             <div className="flex items-center gap-2">
-                                <div className="p-1.5 bg-[#FFD93D] border border-black rounded">
-                                    <MessageSquare className="w-4 h-4 text-black" />
-                                </div>
-                                <div>
-                                    <h3 className="font-black text-sm text-black">
-                                        Issue Discussion Thread
-                                    </h3>
-                                    <p className="text-[10px] font-mono text-gray-500">
-                                        Live bidirectional WebSocket channel (ticket:{ticket._id.slice(-6)})
-                                    </p>
-                                </div>
+                                <MessageSquare className="w-4 h-4 text-[#3fd6c6]" />
+                                <h3 className="font-medium text-sm text-[#f2f2f2]">
+                                    Issue Discussion &amp; Activity
+                                </h3>
                             </div>
-
-                            <span className="font-mono text-xs font-bold bg-gray-100 px-2 py-0.5 border border-black rounded">
-                                {comments.length} message{comments.length !== 1 ? 's' : ''}
+                            <span className="text-xs font-mono text-[#8a8d91] px-2.5 py-0.5 rounded-full bg-[#141414] border border-[#222222]">
+                                {comments.length} {comments.length === 1 ? "entry" : "entries"}
                             </span>
                         </div>
 
                         {/* Messages Stream */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FAF9F5]">
+                        <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-3.5 bg-[#090909] rounded-[6px] border border-[#181818]">
                             {comments.length === 0 ? (
-                                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-gray-400">
-                                    <MessageSquare className="w-8 h-8 mb-2 opacity-50" />
-                                    <p className="font-bold text-xs uppercase">No comments yet</p>
-                                    <p className="text-[11px] text-gray-500 mt-1 max-w-xs">
-                                        Ask a question or post an update to begin live resolution.
+                                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#8a8d91]">
+                                    <MessageSquare className="w-8 h-8 mb-2 opacity-30" />
+                                    <p className="font-mono text-xs uppercase text-[#a6a9ad]">No discussion entries yet</p>
+                                    <p className="text-[11px] text-[#8a8d91] mt-1 max-w-xs">
+                                        Post an update, note, or inquiry to begin coordinated resolution.
                                     </p>
                                 </div>
                             ) : (
@@ -709,48 +672,48 @@ const TicketDetails = () => {
                                     return (
                                         <div
                                             key={comment._id}
-                                            className={`flex flex-col ${isSenderMe ? 'items-end' : 'items-start'}`}
+                                            className={`flex flex-col ${isSenderMe ? "items-end" : "items-start"}`}
                                         >
                                             {/* Sender Info Bar */}
                                             <div className="flex items-center gap-1.5 mb-1 px-1">
-                                                <span className="font-extrabold text-[11px] text-black">
-                                                    {comment.senderId?.fullname || 'User'}
+                                                <span className="font-medium text-xs text-[#f2f2f2]">
+                                                    {comment.senderId?.fullname || "User"}
                                                 </span>
-                                                <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 border rounded ${
-                                                    comment.senderId?.role === 'Warden' ? 'bg-[#FF5252] text-white border-black' :
-                                                    comment.senderId?.role === 'Technician' ? 'bg-[#38E54D] text-black border-black' :
-                                                    'bg-[#FFD93D] text-black border-black'
+                                                <span className={`text-[10px] font-mono px-2 py-0.2 rounded-full border ${
+                                                    comment.senderId?.role === "Warden" ? "bg-rose-950/60 text-rose-300 border-rose-800/40" :
+                                                    comment.senderId?.role === "Technician" ? "bg-emerald-950/60 text-emerald-300 border-emerald-800/40" :
+                                                    "bg-[#1a1a1a] text-[#a6a9ad] border-[#2a2a2a]"
                                                 }`}>
-                                                    {comment.senderId?.role || 'User'}
+                                                    {comment.senderId?.role || "Resident"}
                                                 </span>
-                                                <span className="text-[10px] font-mono text-gray-400">
-                                                    {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                <span className="text-[10px] font-mono text-[#8a8d91]">
+                                                    {new Date(comment.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                                 </span>
                                             </div>
 
                                             {/* Message Bubble */}
                                             <div
-                                                className={`max-w-[85%] rounded-lg p-3 text-xs leading-relaxed border-2 border-black ${
+                                                className={`max-w-[85%] rounded-[6px] p-3.5 text-xs leading-relaxed border ${
                                                     isInternalNote
-                                                        ? 'staff-note-stripe border-amber-600 text-amber-950 neo-shadow-sm'
+                                                        ? "bg-[#181208] border-amber-900/50 text-amber-200/95"
                                                         : isSenderMe
-                                                        ? 'bg-[#FFD93D] text-black neo-shadow-sm'
-                                                        : 'bg-white text-black neo-shadow-sm'
+                                                        ? "bg-[#161616] border-[#2c2c2c] text-[#f2f2f2]"
+                                                        : "bg-[#101010] border-[#222222] text-[#f2f2f2]"
                                                 }`}
                                             >
                                                 {isInternalNote && (
-                                                    <div className="flex items-center gap-1 text-[10px] font-mono font-black text-amber-800 uppercase mb-1 pb-1 border-b border-amber-400/50">
+                                                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400 uppercase mb-1.5 pb-1 border-b border-amber-900/40">
                                                         <Lock className="w-3 h-3" />
-                                                        <span>Internal Staff Note (Hidden from Student)</span>
+                                                        <span>Internal Staff Note (Hidden from Resident)</span>
                                                     </div>
                                                 )}
-                                                <p className="whitespace-pre-wrap font-sans font-medium">
+                                                <p className="whitespace-pre-wrap font-normal">
                                                     {comment.message}
                                                 </p>
 
                                                 {/* Comment Attachments */}
                                                 {comment.attachments && comment.attachments.length > 0 && (
-                                                    <div className="mt-2 pt-2 border-t border-black/15">
+                                                    <div className="mt-2.5 pt-2 border-t border-[#222222]">
                                                         <AttachmentViewer attachments={comment.attachments} compact={true} />
                                                     </div>
                                                 )}
@@ -765,44 +728,44 @@ const TicketDetails = () => {
                         {/* Comment Input Footer */}
                         <form
                             onSubmit={handleSendComment}
-                            className="p-3 bg-white border-t-2 border-black flex flex-col gap-2"
+                            className="p-3 bg-[#0a0a0a] rounded-[6px] border border-[#1f1f1f] mt-3 flex flex-col gap-2.5"
                         >
                             {/* Staff Only Internal Note Toggle */}
                             {isStaff && (
-                                <div className="flex items-center justify-between bg-amber-50 px-2.5 py-1.5 border border-amber-300 rounded text-xs">
-                                    <label className="flex items-center gap-2 cursor-pointer font-bold text-amber-900 select-none">
+                                <div className="flex items-center justify-between bg-[#141005] px-3 py-1.5 border border-amber-900/40 rounded-[6px] text-xs">
+                                    <label className="flex items-center gap-2 cursor-pointer font-medium text-amber-300 select-none">
                                         <input
                                             type="checkbox"
                                             checked={isInternal}
                                             onChange={(e) => setIsInternal(e.target.checked)}
-                                            className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500"
+                                            className="w-3.5 h-3.5 rounded text-amber-500 focus:ring-0 bg-[#0a0a0a] border-[#333]"
                                         />
-                                        <span className="flex items-center gap-1">
-                                            {isInternal ? <Lock className="w-3.5 h-3.5 text-amber-700" /> : <Unlock className="w-3.5 h-3.5 text-gray-500" />}
+                                        <span className="flex items-center gap-1.5">
+                                            {isInternal ? <Lock className="w-3 h-3 text-amber-400" /> : <Unlock className="w-3 h-3 text-[#8a8d91]" />}
                                             <span>Post as Internal Staff Note</span>
                                         </span>
                                     </label>
-                                    <span className="text-[10px] font-mono text-amber-700 font-medium">
-                                        {isInternal ? 'Students will NOT see this note' : 'Visible to everyone'}
+                                    <span className="text-[10px] font-mono text-amber-400/80">
+                                        {isInternal ? "Hidden from students" : "Visible to everyone"}
                                     </span>
                                 </div>
                             )}
 
                             {/* Preview Selected Comment Attachments */}
                             {commentAttachments.length > 0 && (
-                                <div className="flex flex-wrap gap-2 p-1.5 bg-gray-50 border border-black/20 rounded">
+                                <div className="flex flex-wrap gap-2 p-2 bg-[#080808] border border-[#222222] rounded-[6px]">
                                     {commentAttachments.map((att, idx) => (
-                                        <div key={idx} className="flex items-center gap-1.5 bg-white border border-black rounded px-2 py-0.5 text-[11px] neo-shadow-sm">
-                                            {att.fileType?.includes('pdf') || att.filename?.endsWith('.pdf') ? (
-                                                <FileText className="w-3.5 h-3.5 text-red-600" />
+                                        <div key={idx} className="flex items-center gap-1.5 bg-[#141414] border border-[#222222] rounded-full px-2.5 py-0.5 text-[11px] text-[#f2f2f2]">
+                                            {att.fileType?.includes("pdf") || att.filename?.endsWith(".pdf") ? (
+                                                <FileText className="w-3.5 h-3.5 text-rose-400" />
                                             ) : (
-                                                <img src={att.url} alt="" className="w-4 h-4 object-cover rounded border" />
+                                                <img src={att.url} alt="" className="w-3.5 h-3.5 object-cover rounded-full" />
                                             )}
-                                            <span className="font-bold truncate max-w-[120px]">{att.filename}</span>
+                                            <span className="font-mono truncate max-w-[120px]">{att.filename}</span>
                                             <button
                                                 type="button"
                                                 onClick={() => setCommentAttachments((prev) => prev.filter((_, i) => i !== idx))}
-                                                className="text-gray-500 hover:text-black cursor-pointer"
+                                                className="text-[#8a8d91] hover:text-[#f2f2f2] cursor-pointer ml-1"
                                             >
                                                 <X className="w-3 h-3" />
                                             </button>
@@ -812,7 +775,6 @@ const TicketDetails = () => {
                             )}
 
                             <div className="flex items-center gap-2">
-                                {/* Hidden File Input */}
                                 <input
                                     type="file"
                                     ref={commentFileInputRef}
@@ -821,36 +783,31 @@ const TicketDetails = () => {
                                     onChange={handleCommentFileUpload}
                                 />
 
-                                {/* File Attachment Trigger Button */}
                                 <button
                                     type="button"
                                     onClick={() => commentFileInputRef.current?.click()}
                                     disabled={uploadingAttachment}
                                     title="Attach image or PDF document"
-                                    className="neo-btn bg-white hover:bg-gray-100 text-black p-2 border-2 border-black"
+                                    className="p-2 rounded-full bg-[#141414] border border-[#222222] hover:border-[#303030] text-[#a6a9ad] hover:text-[#f2f2f2] transition-colors"
                                 >
                                     {uploadingAttachment ? (
-                                        <Loader2 className="w-4 h-4 animate-spin text-black" />
+                                        <Loader2 className="w-4 h-4 animate-spin text-[#3fd6c6]" />
                                     ) : (
-                                        <Paperclip className="w-4 h-4 text-black" />
+                                        <Paperclip className="w-4 h-4" />
                                     )}
                                 </button>
 
                                 <input
                                     type="text"
-                                    placeholder={isInternal ? "Write internal staff note..." : "Type reply to student or technician (Enter to send)..."}
+                                    placeholder={isInternal ? "Write internal staff note..." : "Type reply to resident or staff (Enter to send)..."}
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    className={`flex-1 px-3 py-2 text-xs border-2 border-black rounded focus:outline-none focus:ring-2 ${
-                                        isInternal ? 'bg-amber-50/50 focus:ring-amber-400' : 'bg-white focus:ring-[#FFD93D]'
-                                    }`}
+                                    className="flex-1 px-4 py-2 text-xs border border-[#222222] rounded-full bg-[#080808] text-[#f2f2f2] placeholder-[#8a8d91] focus:outline-none focus:border-[#3fd6c6]"
                                 />
                                 <button
                                     type="submit"
                                     disabled={submittingComment || (!message.trim() && commentAttachments.length === 0)}
-                                    className={`neo-btn text-xs px-4 py-2 font-black uppercase ${
-                                        isInternal ? 'bg-amber-400 text-black' : 'bg-[#FFD93D] text-black'
-                                    }`}
+                                    className="px-4 py-2 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-40"
                                 >
                                     <Send className="w-3.5 h-3.5" />
                                     <span>Send</span>
