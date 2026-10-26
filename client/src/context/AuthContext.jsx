@@ -6,7 +6,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [authError, setAuthError] = useState(null);
 
     const checkAuth = useCallback(async () => {
         try {
@@ -28,7 +27,6 @@ export const AuthProvider = ({ children }) => {
     }, [checkAuth]);
 
     const login = async (email, password) => {
-        setAuthError(null);
         try {
             const res = await axiosInstance.post('/auth/login', { email, password });
             if (res.data?.success) {
@@ -38,13 +36,11 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: res.data?.message };
         } catch (err) {
             const msg = err.response?.data?.message || 'Login failed. Please check credentials.';
-            setAuthError(msg);
             return { success: false, message: msg };
         }
     };
 
     const register = async (formData) => {
-        setAuthError(null);
         try {
             const res = await axiosInstance.post('/auth/register', formData);
             if (res.data?.success) {
@@ -54,7 +50,6 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: res.data?.message };
         } catch (err) {
             const msg = err.response?.data?.message || 'Registration failed.';
-            setAuthError(msg);
             return { success: false, message: msg };
         }
     };
@@ -69,10 +64,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Quick switch demo user helper
-    const quickLogin = async (email) => {
-        return await login(email, 'password123');
-    };
 
     return (
         <AuthContext.Provider
@@ -80,11 +71,9 @@ export const AuthProvider = ({ children }) => {
                 user,
                 setUser,
                 loading,
-                authError,
                 login,
                 register,
                 logout,
-                quickLogin,
                 checkAuth
             }}
         >

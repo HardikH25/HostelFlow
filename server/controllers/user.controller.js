@@ -29,24 +29,6 @@ export const getStaff = async (req, res) => {
     }
 };
 
-export const getTechnicians = async (req, res) => {
-    try {
-        const technicians = await User.find({ role: 'Technician' })
-            .select('-password')
-            .sort({ fullname: 1 });
-
-        return res.status(200).json({
-            success: true,
-            technicians
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to retrieve technicians.',
-            error: error.message
-        });
-    }
-};
 
 /**
  * POST /api/users/staff

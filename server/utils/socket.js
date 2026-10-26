@@ -10,8 +10,3 @@ export const emitToRoom = (room, event, data) => {
     }
 };
 
-export const emitGlobal = (event, data) => {
-    if (ioInstance) {
-        ioInstance.emit(event, data);
-    }
-};

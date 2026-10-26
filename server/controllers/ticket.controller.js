@@ -2,6 +2,7 @@ import Ticket from '../models/Ticket.js';
 import Comment from '../models/Comment.js';
 import User from '../models/User.js';
 import { emitToRoom } from '../utils/socket.js';
+import { deleteFromCloudinary } from '../utils/cloudinary.js';
 
 /**
  * Standard SLA duration mapping based on priority
@@ -386,7 +387,7 @@ export const updateTicketPriority = async (req, res) => {
 export const deleteTicket = async (req, res) => {
     try {
         const { id } = req.params;
-        const ticket = await Ticket.findByIdAndDelete(id);
+        const ticket = await Ticket.findById(id);
 
         if (!ticket) {
             return res.status(404).json({
@@ -394,6 +395,17 @@ export const deleteTicket = async (req, res) => {
                 message: 'Ticket not found.'
             });
         }
+
+        // Delete all Cloudinary attachments first (prevent storage orphans)
+        if (ticket.attachments && ticket.attachments.length > 0) {
+            await Promise.allSettled(
+                ticket.attachments
+                    .filter(a => a.publicId)
+                    .map(a => deleteFromCloudinary(a.publicId, a.fileType?.includes('pdf') ? 'raw' : 'image'))
+            );
+        }
+
+        await Ticket.findByIdAndDelete(id);
 
         // Delete all associated comments to prevent orphaned documents
         await Comment.deleteMany({ ticketId: id });
