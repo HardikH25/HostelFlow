@@ -1,4 +1,4 @@
-# HostelFlow // SLA-Driven Issue Resolution & Governance Engine
+# HostelFlow - SLA-Driven Issue Resolution & Governance Engine
 
 > **An enterprise-grade, real-time Service Level Agreement (SLA) governance and maintenance tracking platform built for Scaler School of Technology (SST) student hostels.**
 
