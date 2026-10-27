@@ -17,7 +17,7 @@
 | 🚀 **Live Web Application** | **Vercel** | [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app) |
 | ⚡ **Backend REST & WebSocket API** | **Render** | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
 | 🩺 **Backend Health Endpoint** | **Render** | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
-| 🎥 **Walkthrough Demo Video** | **Google Drive** | [Watch Demo Video (3–5 Min)](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
+| 🎥 **Walkthrough Demo Video** | **Google Drive** | [Watch Demo Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
 | 📁 **Source Code Repository** | **GitHub** | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
 
 ---
