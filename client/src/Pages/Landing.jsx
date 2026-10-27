@@ -125,10 +125,10 @@ const Landing = () => {
                                         </span>
                                     </div>
                                     <p className="text-xs font-medium text-[#f2f2f2] mb-1">
-                                        Ceiling fan regulator short-circuit in Room B2-304
+                                        Ceiling fan regulator short-circuit
                                     </p>
                                     <div className="flex items-center justify-between text-[11px] text-[#8a8d91] pt-2 border-t border-[#1f1f1f]">
-                                        <span>Neeladri Hostel • Block B</span>
+                                        <span>Neeladri Hostel • Block B • Room B2-11</span>
                                         <span className="text-[#a6a9ad]">Assigned: Ramesh K.</span>
                                     </div>
                                 </div>
@@ -141,10 +141,10 @@ const Landing = () => {
                                         </span>
                                     </div>
                                     <p className="text-xs font-medium text-[#f2f2f2] mb-1">
-                                        Water heater pipe leakage in 3rd floor bathroom
+                                        Water heater pipe leakage
                                     </p>
                                     <div className="flex items-center justify-between text-[11px] text-[#8a8d91] pt-2 border-t border-[#1f1f1f]">
-                                        <span>SST Velankani Hostel • 3rd Floor</span>
+                                        <span>SST Velankani Hostel • 1st Floor • Room 125</span>
                                         <span className="text-[#a6a9ad]">Assigned: Suresh V.</span>
                                     </div>
                                 </div>
