@@ -527,7 +527,7 @@ export const updateTicketDeadline = async (req, res) => {
             escalatedAt: new Date(),
             oldPriority: ticket.priority,
             newPriority: ticket.priority,
-            reason: `SLA Deadline adjusted to ${newDeadline.toISOString()} by ${req.user.fullname} (${req.user.role})`
+            reason: `Resolution window adjusted to ${newDeadline.toISOString()} by ${req.user.fullname} (${req.user.role})`
         });
 
         await ticket.save();
@@ -543,13 +543,13 @@ export const updateTicketDeadline = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: `SLA Deadline updated to ${newDeadline.toLocaleString()}.`,
+            message: `Resolution target updated to ${newDeadline.toLocaleString()}.`,
             ticket
         });
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: 'Failed to update SLA deadline.',
+            message: 'Failed to update resolution deadline.',
             error: error.message
         });
     }

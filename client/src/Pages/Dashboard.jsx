@@ -382,7 +382,9 @@ const Dashboard = () => {
             <CreateTicketModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                onTicketCreated={(newTicket) => setTickets((prev) => [newTicket, ...prev])}
+                onTicketCreated={(newTicket) =>
+                    setTickets((prev) => (prev.some((t) => t._id === newTicket._id) ? prev : [newTicket, ...prev]))
+                }
             />
 
             <AddStaffModal

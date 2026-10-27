@@ -1,11 +1,14 @@
 import SLACountdown from "./SLACountdown";
 import AttachmentViewer from "./AttachmentViewer";
+import { formatFriendlyDateTime, formatAuditTimestamp, humanizeTimestampsInText } from "../utils/dateUtils";
 import {
     Paperclip,
     User,
     MapPin,
     PauseCircle,
-    AlertTriangle
+    AlertTriangle,
+    Calendar,
+    Clock
 } from "lucide-react";
 
 const TicketMeta = ({ ticket }) => {
@@ -69,6 +72,24 @@ const TicketMeta = ({ ticket }) => {
                             <span className="font-medium text-[#f2f2f2]">{ticket.locationSnapshot || ticket.studentId?.location}</span>
                         </div>
                     </div>
+                    {ticket.createdAt && (
+                        <div className="flex items-start gap-2">
+                            <Calendar className="w-4 h-4 text-[#8a8d91] shrink-0 mt-0.5" />
+                            <div>
+                                <span className="block text-[10px] font-mono text-[#8a8d91] uppercase">Reported On:</span>
+                                <span className="font-medium text-[#f2f2f2]">{formatFriendlyDateTime(ticket.createdAt)}</span>
+                            </div>
+                        </div>
+                    )}
+                    {ticket.slaDeadline && (
+                        <div className="flex items-start gap-2">
+                            <Clock className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
+                            <div>
+                                <span className="block text-[10px] font-mono text-[#8a8d91] uppercase">Target Resolution:</span>
+                                <span className="font-medium text-[#f2f2f2]">{formatFriendlyDateTime(ticket.slaDeadline)}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Resolution Timeline Notifications */}
@@ -105,13 +126,13 @@ const TicketMeta = ({ ticket }) => {
                             <div key={idx} className="p-2.5 rounded-[6px] bg-[#0a0a0a] border border-[#1a1a1a] text-xs flex items-center justify-between">
                                 <div>
                                     <span className="font-mono text-[10px] text-[#8a8d91] block">
-                                        {new Date(item.escalatedAt || item.triggeredAt || item.createdAt || Date.now()).toLocaleString()}
+                                        {formatAuditTimestamp(item.escalatedAt || item.triggeredAt || item.createdAt)}
                                     </span>
                                     <span className="font-medium text-[#f2f2f2]">
-                                        {item.reason?.replace(/SLA Breach/gi, "Target Overdue")?.replace(/SLA Deadline adjusted/gi, "Resolution window adjusted") || "Priority Escalation"}
+                                        {humanizeTimestampsInText(item.reason) || "Priority Escalation"}
                                     </span>
                                 </div>
-                                <div className="text-right font-mono text-[11px]">
+                                <div className="text-right font-mono text-[11px] shrink-0 ml-3">
                                     <span className="text-[#8a8d91]">{item.oldPriority}</span>
                                     <span className="text-[#8a8d91] mx-1">→</span>
                                     <span className="text-amber-400 font-semibold">{item.newPriority}</span>

@@ -4,19 +4,21 @@ import { useAuth } from "../context/AuthContext";
 import { axiosInstance } from "../axiosCalls/axios";
 import FileUploadZone from "./FileUploadZone";
 
-const CreateTicketModal = ({ isOpen, onClose, onCreated }) => {
+const CreateTicketModal = ({ isOpen, onClose, onCreated, onTicketCreated }) => {
     const { user } = useAuth();
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         title: "",
         category: "Plumbing",
         priority: "Medium",
         description: "",
         customDeadlineHours: 24,
         attachments: []
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
 
     const [locationScope, setLocationScope] = useState("my_room");
     const [commonAreaLocation, setCommonAreaLocation] = useState("Corridor / Water Dispenser");
@@ -28,6 +30,11 @@ const CreateTicketModal = ({ isOpen, onClose, onCreated }) => {
             ...prev,
             [e.target.name]: e.target.value
         }));
+    };
+
+    const handleClose = () => {
+        setError(null);
+        onClose();
     };
 
     const handleSubmit = async (e) => {
@@ -49,13 +56,19 @@ const CreateTicketModal = ({ isOpen, onClose, onCreated }) => {
         try {
             const res = await axiosInstance.post("/tickets", payload);
             if (res.data?.success) {
-                onCreated(res.data.ticket);
+                const callback = onTicketCreated || onCreated;
+                if (typeof callback === "function") {
+                    callback(res.data.ticket);
+                }
+                setFormData(initialFormData);
+                setError(null);
                 onClose();
             } else {
                 setError(res.data?.message || "Failed to create ticket.");
             }
         } catch (err) {
-            setError(err.response?.data?.message || "Error submitting ticket. Please check fields.");
+            console.error("Error creating ticket:", err);
+            setError(err.response?.data?.message || err.message || "Error submitting ticket. Please check fields.");
         } finally {
             setSubmitting(false);
         }
@@ -76,7 +89,7 @@ const CreateTicketModal = ({ isOpen, onClose, onCreated }) => {
                         </p>
                     </div>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="p-1.5 rounded-full hover:bg-[#1a1a1a] text-[#8a8d91] hover:text-[#f2f2f2] transition-colors cursor-pointer"
                     >
                         <X className="w-4 h-4" />
@@ -235,7 +248,7 @@ const CreateTicketModal = ({ isOpen, onClose, onCreated }) => {
                     <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#1f1f1f] mt-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="px-4 py-2 rounded-full bg-[#141414] border border-[#222222] hover:border-[#303030] text-[#a6a9ad] hover:text-[#f2f2f2] text-xs font-medium transition-colors"
                         >
                             Cancel

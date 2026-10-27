@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatFriendlyDateTime } from "../utils/dateUtils";
 import { Clock, AlertCircle, CheckCircle2, PauseCircle } from "lucide-react";
 
 const SLACountdown = ({ ticket, compact = false }) => {
@@ -49,6 +50,13 @@ const SLACountdown = ({ ticket, compact = false }) => {
         };
 
         calculateTime();
+
+        if (ticket.status === "Resolved" || ticket.status === "Awaiting-Student-Reply") {
+            return;
+        }
+
+        const interval = setInterval(calculateTime, 1000);
+        return () => clearInterval(interval);
     }, [ticket?.slaDeadline, ticket?.status]);
 
     if (!ticket) return null;
@@ -76,7 +84,10 @@ const SLACountdown = ({ ticket, compact = false }) => {
     // 3. Overdue / Target Exceeded
     if (timeLeft.isBreached || ticket.slaBreached) {
         return (
-            <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/40 text-red-300 border border-red-900/60 font-mono text-xs ${compact ? "text-[10px] py-0.5" : ""}`}>
+            <div
+                title={ticket.slaDeadline ? `Target was: ${formatFriendlyDateTime(ticket.slaDeadline)}` : undefined}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/40 text-red-300 border border-red-900/60 font-mono text-xs ${compact ? "text-[10px] py-0.5" : ""}`}
+            >
                 <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
                 <span>
                     Overdue +{String(timeLeft.hours).padStart(2, "0")}:{String(timeLeft.minutes).padStart(2, "0")}:{String(timeLeft.seconds).padStart(2, "0")}
@@ -89,7 +100,10 @@ const SLACountdown = ({ ticket, compact = false }) => {
     const isUrgent = timeLeft.totalRemainingMs < 4 * 60 * 60 * 1000;
 
     return (
-        <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#121212] border ${isUrgent ? "border-amber-900/70 text-amber-200" : "border-[#222222] text-[#f2f2f2]"} font-mono text-xs ${compact ? "text-[10px]" : ""}`}>
+        <div
+            title={ticket.slaDeadline ? `Target: ${formatFriendlyDateTime(ticket.slaDeadline)}` : undefined}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#121212] border ${isUrgent ? "border-amber-900/70 text-amber-200" : "border-[#222222] text-[#f2f2f2]"} font-mono text-xs ${compact ? "text-[10px]" : ""}`}
+        >
             <Clock className={`w-3 h-3 ${isUrgent ? "text-amber-400" : "text-[#717478]"}`} />
             <span>
                 {String(timeLeft.hours).padStart(2, "0")}h {String(timeLeft.minutes).padStart(2, "0")}m {String(timeLeft.seconds).padStart(2, "0")}s

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { axiosInstance } from "../axiosCalls/axios";
 import confetti from "canvas-confetti";
+import { formatFriendlyDateTime } from "../utils/dateUtils";
 import {
     Clock,
     Wrench,
@@ -182,6 +183,15 @@ const TicketControls = ({ ticket, user, staffList, onTicketUpdated }) => {
                                 Warden Controlled
                             </span>
                         </div>
+
+                        {ticket.slaDeadline && (
+                            <div className="mb-2.5 px-3 py-1.5 rounded-[4px] bg-[#0a0a0a] border border-[#1f1f1f] flex items-center justify-between text-xs">
+                                <span className="text-[10px] font-mono text-[#8a8d91] uppercase">Current Target:</span>
+                                <span className="font-medium text-[#3fd6c6]">
+                                    {formatFriendlyDateTime(ticket.slaDeadline)}
+                                </span>
+                            </div>
+                        )}
 
                         {/* Presets */}
                         <div className="grid grid-cols-4 gap-2 mb-2">

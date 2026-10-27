@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { axiosInstance } from "../axiosCalls/axios";
 import AttachmentViewer from "./AttachmentViewer";
+import { formatAuditTimestamp } from "../utils/dateUtils";
 import {
     MessageSquare,
     Lock,
@@ -126,7 +127,7 @@ const CommentThread = ({ ticketId, comments = [], user, isStaff }) => {
                                         {comment.senderId?.role || "Resident"}
                                     </span>
                                     <span className="text-[10px] font-mono text-[#8a8d91]">
-                                        {new Date(comment.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                        {formatAuditTimestamp(comment.createdAt)}
                                     </span>
                                 </div>
 
