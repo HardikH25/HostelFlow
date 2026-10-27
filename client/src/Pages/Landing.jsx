@@ -104,10 +104,10 @@ const Landing = () => {
                             {/* Window header */}
                             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#222222]">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
-                                    <span className="text-[11px] font-mono text-[#8a8d91] ml-2">Console</span>
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] border border-[#e0443e]/40 shadow-sm" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] border border-[#dea123]/40 shadow-sm" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] border border-[#1aab29]/40 shadow-sm" />
+                                    <span className="text-[11px] font-mono text-[#8a8d91] ml-2 font-medium">Console</span>
                                 </div>
                                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[10px] font-mono text-[#3fd6c6]">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6]" />
