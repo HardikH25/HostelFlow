@@ -166,5 +166,6 @@ VITE_API_URL=http://localhost:5005
 
 ## Deployment
 - **GitHub Repository**: [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow)
-- **Live Application**: *[Insert live URL here after deployment]*
+- **Live Application**: [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app)
+- **Backend API**: [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com)
 - **Demo Video**: *[Insert 3–5 minute video link here]*
