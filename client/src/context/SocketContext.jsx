@@ -4,7 +4,8 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5005';
+const rawSocketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:5005';
+const SOCKET_URL = rawSocketUrl.replace(/\/api\/?$/, '');
 
 export const SocketProvider = ({ children }) => {
     const { user } = useAuth();
