@@ -67,15 +67,17 @@ const Landing = () => {
                     <div className="lg:col-span-7 flex flex-col justify-center">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141414] border border-[#222222] text-[11px] font-mono text-[#a6a9ad] w-fit mb-6">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6] animate-pulse" />
-                            <span>Neeladri &amp; Velankani Campus Living Operations</span>
+                            <span className="text-[#3fd6c6] font-medium">Scaler School of Technology</span>
+                            {/* <span className="text-[#55585d]">•</span> */}
+                            {/* <span>Neeladri &amp; Velankani Hostels</span> */}
                         </div>
 
                         <h1 className="text-4xl sm:text-6xl xl:text-7xl font-normal text-[#f2f2f2] tracking-tight leading-[1.05] mb-6">
-                            Hostel resolution with guaranteed timelines.
+                            SST hostel issue resolution with guaranteed timelines.
                         </h1>
 
                         <p className="text-base sm:text-lg text-[#a6a9ad] leading-relaxed font-normal max-w-xl mb-8">
-                            Modern facility management for campus residents. Continuous resolution monitoring, automated priority escalation, instant bi-directional messaging, and verifiable documentation.
+                            Dedicated facility management for Scaler School of Technology campus residents across Neeladri &amp; Velankani hostels. Continuous resolution monitoring, automated priority escalation, instant messaging, and verifiable accountability.
                         </p>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -83,7 +85,7 @@ const Landing = () => {
                                 to="/signup"
                                 className="px-6 py-3 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium flex items-center gap-2 transition-all shadow-sm"
                             >
-                                <span>Register as Student</span>
+                                <span>Register as SST Student</span>
                                 <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link
@@ -105,11 +107,11 @@ const Landing = () => {
                                     <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
                                     <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
                                     <div className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
-                                    <span className="text-[11px] font-mono text-[#8a8d91] ml-2">Console / Live Dispatch</span>
+                                    <span className="text-[11px] font-mono text-[#8a8d91] ml-2">Console</span>
                                 </div>
                                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#141414] border border-[#222222] text-[10px] font-mono text-[#3fd6c6]">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#3fd6c6]" />
-                                    Live Sync
+                                    Campus Network
                                 </span>
                             </div>
 
@@ -142,7 +144,7 @@ const Landing = () => {
                                         Water heater pipe leakage in 3rd floor bathroom
                                     </p>
                                     <div className="flex items-center justify-between text-[11px] text-[#8a8d91] pt-2 border-t border-[#1f1f1f]">
-                                        <span>Velankani Hostel • Block A</span>
+                                        <span>SST Velankani Hostel • 3rd Floor</span>
                                         <span className="text-[#a6a9ad]">Assigned: Suresh V.</span>
                                     </div>
                                 </div>
@@ -160,33 +162,33 @@ const Landing = () => {
                 </div>
 
                 {/* Ruled Row of Facts */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-y border-[#222222] mb-20">
-                    <div>
-                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-y border-[#222222] mb-20 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1.5">
                             100%
                         </div>
                         <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
                             Accountability Coverage
                         </div>
                     </div>
-                    <div>
-                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
-                            30 Min
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1.5">
+                            3-Way Chat
                         </div>
                         <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
-                            Automated Sweeps
+                            Students, Wardens &amp; Staff
                         </div>
                     </div>
-                    <div>
-                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
-                            2 Hostels
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1.5">
+                            2 SST Hostels
                         </div>
                         <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
                             Neeladri &amp; Velankani
                         </div>
                     </div>
-                    <div>
-                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1">
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-2xl sm:text-3xl font-normal text-[#f2f2f2] tracking-tight mb-1.5">
                             Zero Delay
                         </div>
                         <div className="text-xs font-mono text-[#8a8d91] uppercase tracking-wider">
@@ -277,13 +279,13 @@ const Landing = () => {
                                 Student Living Portal
                             </h2>
                             <p className="text-xs text-[#a6a9ad] leading-relaxed mb-6">
-                                Designed specifically for hostel boarders to submit maintenance requests with verified room numbers, attach photo or PDF documentation, and track resolution timelines live.
+                                Designed specifically for SST hostel residents to submit maintenance requests with verified room numbers, attach photo or PDF documentation, and track guaranteed resolution timelines.
                             </p>
 
                             <div className="space-y-3 font-mono text-xs text-[#a6a9ad]">
                                 <div className="flex items-start gap-2.5">
                                     <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
-                                    <span>Verified hostel &amp; room numbering structure</span>
+                                    <span>SST hostel &amp; room numbering structure</span>
                                 </div>
                                 <div className="flex items-start gap-2.5">
                                     <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
@@ -305,7 +307,7 @@ const Landing = () => {
                                 to="/signup"
                                 className="w-full py-3 rounded-full bg-[#f2f2f2] text-[#0a0a0a] hover:bg-white text-xs font-medium text-center block transition-colors"
                             >
-                                Register Student Account
+                                Register SST Student Account
                             </Link>
                         </div>
                     </div>
@@ -318,7 +320,7 @@ const Landing = () => {
                                     Administrative Command
                                 </span>
                                 <span className="text-[11px] font-mono text-[#8a8d91]">
-                                    Wardens &amp; Technicians
+                                    SST Wardens &amp; Technicians
                                 </span>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-normal text-[#f2f2f2] tracking-tight mb-3">
@@ -331,7 +333,7 @@ const Landing = () => {
                             <div className="space-y-3 font-mono text-xs text-[#a6a9ad]">
                                 <div className="flex items-start gap-2.5">
                                     <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
-                                    <span>Zero Privilege Escalation (Secured via Master Staff Key)</span>
+                                    <span>Escalations by wardens</span>
                                 </div>
                                 <div className="flex items-start gap-2.5">
                                     <Check className="w-4 h-4 text-[#3fd6c6] shrink-0 mt-0.5" />
@@ -364,7 +366,7 @@ const Landing = () => {
             <footer className="border-t border-[#222222] bg-[#080808] py-8">
                 <div className="max-w-[1360px] mx-auto px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#8a8d91]">
                     <div>
-                        HOSTELFLOW // Campus Issue Resolution Infrastructure
+                        HostelFlow
                     </div>
                     <div>
                         Neeladri &amp; Velankani Hostels • All rights reserved

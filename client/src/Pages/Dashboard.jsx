@@ -10,7 +10,6 @@ import {
     PlusCircle,
     LayoutGrid,
     Kanban,
-    RefreshCw,
     Clock,
     CheckCircle2,
     Search,
@@ -159,15 +158,6 @@ const Dashboard = () => {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                        <button
-                            onClick={fetchTickets}
-                            title="Refresh issue queue"
-                            className="neo-btn bg-[#0e0e0e] text-[#a6a9ad] hover:text-[#f2f2f2] border border-[#222222] hover:border-[#303030] px-3.5 py-1.5 text-xs rounded-full"
-                        >
-                            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-                            <span>Sync</span>
-                        </button>
-
                         {/* Student Action: Report Issue */}
                         {user?.role === "Student" && (
                             <button
