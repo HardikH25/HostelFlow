@@ -31,7 +31,7 @@ const corsOriginCheck = (origin, callback) => {
     if (
         !origin ||
         allowedOrigins.includes(origin) ||
-        (typeof origin === 'string' && origin.endsWith('.vercel.app')) ||
+        (typeof origin === 'string' && (origin.endsWith('.vercel.app') || origin.endsWith('.onrender.com'))) ||
         process.env.NODE_ENV !== 'production'
     ) {
         return callback(null, true);
