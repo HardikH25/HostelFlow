@@ -4,8 +4,21 @@
 
 [![Live Frontend](https://img.shields.io/badge/Live%20App-hostel--flow--eta.vercel.app-3fd6c6?style=for-the-badge&logo=vercel&logoColor=white)](https://hostel-flow-eta.vercel.app)
 [![Live Backend](https://img.shields.io/badge/Backend%20API-hostelflow--xdvr.onrender.com-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://hostelflow-xdvr.onrender.com/health)
+[![Demo Video](https://img.shields.io/badge/Demo%20Video-Google%20Drive-FF8800?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing)
 [![Stack](https://img.shields.io/badge/Stack-MERN%20%2B%20Socket.IO-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://github.com/HardikH25/HostelFlow)
 [![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+
+---
+
+## 🌐 Live Deployments & Demonstration
+
+| Resource | Platform | URL |
+| :--- | :--- | :--- |
+| 🚀 **Live Web Application** | **Vercel** | [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app) |
+| ⚡ **Backend REST & WebSocket API** | **Render** | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
+| 🩺 **Backend Health Endpoint** | **Render** | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
+| 🎥 **Walkthrough Demo Video** | **Google Drive** | [Watch Demo Video (3–5 Min)](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
+| 📁 **Source Code Repository** | **GitHub** | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
 
 ---
 
@@ -255,7 +268,7 @@ VITE_API_URL=https://hostelflow-xdvr.onrender.com
 | **Backend REST & WebSocket API** | **Render** | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
 | **API Health Status** | **Render** | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
 | **Source Code Repository** | **GitHub** | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
-| **Demo Video (3–5 Minutes)** | **Public Link** | *[Insert Loom / YouTube / Drive link here]* |
+| **Demo Video (3–5 Minutes)** | **Google Drive** | [Watch Walkthrough Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
 
 ---
 
