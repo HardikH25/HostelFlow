@@ -19,7 +19,7 @@ HostelFlow is continuously deployed using modern cloud-native edge infrastructur
 | 🚀 **Live Web Application** | **Vercel** | Production Edge | [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app) |
 | ⚡ **Backend REST & WebSocket API** | **Render** | Production Web Service | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
 | 🩺 **Backend Health & Uptime Probe** | **Render** | System Endpoint | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
-| 🎥 **Walkthrough Demonstration Video** | **Google Drive** | Video Showcase | [Watch 3-5 Min Demo Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
+| 🎥 **Walkthrough Demonstration Video** | **Google Drive** | Video Showcase | [Watch Demo Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
 | 📁 **Source Code Repository** | **GitHub** | Main Branch | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
 
 ---
