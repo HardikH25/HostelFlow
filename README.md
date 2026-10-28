@@ -10,6 +10,20 @@
 
 ---
 
+## Deployment
+
+HostelFlow is continuously deployed using modern cloud-native edge infrastructure:
+
+| Resource | Platform | Environment | URL / Endpoint |
+| :--- | :--- | :--- | :--- |
+| 🚀 **Live Web Application** | **Vercel** | Production Edge | [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app) |
+| ⚡ **Backend REST & WebSocket API** | **Render** | Production Web Service | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
+| 🩺 **Backend Health & Uptime Probe** | **Render** | System Endpoint | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
+| 🎥 **Walkthrough Demonstration Video** | **Google Drive** | Video Showcase | [Watch 3-5 Min Demo Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
+| 📁 **Source Code Repository** | **GitHub** | Main Branch | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
+
+---
+
 ## Problem Statement
 
 In large-scale collegiate residential ecosystems—such as Scaler School of Technology's **Neeladri** and **Velankani** hostels housing hundreds of students—facilities management has historically suffered from broken communication channels, delayed resolutions, and a total absence of accountability.
@@ -300,20 +314,6 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 # URL of the Backend API (Render in production, localhost in development)
 VITE_API_URL=https://hostelflow-xdvr.onrender.com
 ```
-
----
-
-## Deployment
-
-HostelFlow is continuously deployed using modern cloud-native edge infrastructure:
-
-| Resource | Platform | Environment | URL / Endpoint |
-| :--- | :--- | :--- | :--- |
-| 🚀 **Live Web Application** | **Vercel** | Production Edge | [https://hostel-flow-eta.vercel.app](https://hostel-flow-eta.vercel.app) |
-| ⚡ **Backend REST & WebSocket API** | **Render** | Production Web Service | [https://hostelflow-xdvr.onrender.com](https://hostelflow-xdvr.onrender.com) |
-| 🩺 **Backend Health & Uptime Probe** | **Render** | System Endpoint | [https://hostelflow-xdvr.onrender.com/health](https://hostelflow-xdvr.onrender.com/health) |
-| 🎥 **Walkthrough Demonstration Video** | **Google Drive** | Video Showcase | [Watch 3-5 Min Demo Video](https://drive.google.com/file/d/1DRDWiLU063El_4_2156twJnigEhRTtUK/view?usp=sharing) |
-| 📁 **Source Code Repository** | **GitHub** | Main Branch | [https://github.com/HardikH25/HostelFlow](https://github.com/HardikH25/HostelFlow) |
 
 ---
 
